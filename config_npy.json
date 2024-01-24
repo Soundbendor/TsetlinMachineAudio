@@ -1,0 +1,16 @@
+{
+    "sample_rate" : 44100,
+    "n_mfcc" : 13,
+    "num_quantiles" : 2,
+    "boolean_encoding" : "onehot-dense",
+    "melkwargs_dict" : {"n_fft": 800, 
+                    "win_length": 320,
+                    "hop_length" : 160,
+                    "n_mels" : 75,
+                    "center" : false},
+    "train_data_path" : "vocalset/train",
+    "val_data_path" : "vocalset/val",
+    "test_data_path" : "vocalset/test",
+    "return_val" : true,
+    "return_test" : true
+}
