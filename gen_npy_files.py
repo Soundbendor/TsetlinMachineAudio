@@ -3,8 +3,10 @@ from VocalSetDataset import VocalSetDataset
 from sklearn.preprocessing import KBinsDiscretizer
 from torchaudio.transforms import MFCC
 from torch import nn
+import json
 
 
+#TODO add CV support
 
 def trimpad(data):
     duration = data.shape[1]
@@ -42,43 +44,41 @@ class TransformFunc:
 
 if __name__ == "__main__":
 
-    num_classes = 5
-    sample_rate = 44100
-    n_mfcc = 13
-    melkwargs_dict = {"n_fft": 800, 
-                    "win_length": 320,
-                    "hop_length" : 160,
-                    "n_mels" : 75,
-                    "center" : False}
-    num_quantiles = 2
-    boolean_encoding = "onehot-dense"
+    with open("config_npy.json", 'r') as f:
+        config = json.load(f)
 
+    sample_rate = config["sample_rate"]
+    n_mfcc = config["n_mfcc"]
+    melkwargs_dict = config["melkwargs_dict"]
+    num_quantiles = config["num_quantiles"]
+    boolean_encoding = config["boolean_encoding"]
+
+    DATA_PATH = config["data_path"]
 
     mfcc_func = MFCC(sample_rate=sample_rate,n_mfcc=n_mfcc,melkwargs=melkwargs_dict)
     booleanizer = KBinsDiscretizer(n_bins=num_quantiles,encode=boolean_encoding)
 
     transform_func = TransformFunc(trimpad,mfcc_func=mfcc_func,boolean_func=booleanizer.fit_transform)
 
+    data = VocalSetDataset(DATA_PATH,transform=transform_func)
 
-    #train_data = VocalSetDataset("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/train/annotations_train.txt",transform=transform_func)
-    data = VocalSetDataset("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/train/annotations_train.txt",transform=transform_func)
-
-    x_file_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/train_X.npy"
-    y_file_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/train_y.npy"
-    #test_file = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/testscrap.npy"
+    x_file_path = config["train_path"]
+    y_file_path = config["test_path"]
+    
     X_list = []
     y_list = []
-    #t_list = []
+  
     for i in range(len(data)):
         X,y = data[i]
+        #save X_list as bool? It just get used as int32 anyway?
         X_list.append(X.astype(np.bool_))
-        y_list.append(y.astype(np.bool_))
-        #t_list.append(y)
+    
+      
 
-    #t_mat = np.vstack(t_list)
+    
     x_mat = np.vstack(X_list)
     y_mat = np.vstack(y_list)
-    #np.save(test_file,t_mat)
+   
     np.save(x_file_path,x_mat)
     np.save(y_file_path,y_mat)
         
