@@ -53,7 +53,7 @@ for f in ${!fileNameArray[@]}; do
 
 done
 
-printf "%s\n" "${annotations[@]}" > annotations.txt
+printf "%s\n" "${annotations[@]}" > tech_annotations.txt
 
 exit 0
 
