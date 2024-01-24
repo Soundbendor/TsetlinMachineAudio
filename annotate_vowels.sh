@@ -4,14 +4,14 @@ annotations=()
 
 # readarray -d '' fileNameArray < <(find ~+ -name "*.wav" -print0)
 readarray fileNameArray < <(find ~+ -name "*.wav" -print)
-
+re='^[0-9]+$'
 for f in ${!fileNameArray[@]}; do
         s=${fileNameArray[$f]}
         char=${s: -6: 1}
-	# duration=$(ffprobe -i $s -show_entries format=duration -v quiet -of csv="p=0")
+
         num_char=${s: -8: 1}
 
-        re='^[0-9]+$'
+        
         if [[ $num_char =~ $re ]] ; then
                 case $char in
 
