@@ -7,6 +7,8 @@ import json
 
 
 #TODO add CV support
+#TODO divorce from torchaudio? librosa
+#TODO consider downsampling
 
 def trimpad(data):
     duration = data.shape[1]
