@@ -1,14 +1,17 @@
 {
+    "seg_length" : 44100,
     "sample_rate" : 44100,
+    "bit_depth" : 16,
     "n_mfcc" : 13,
+    "log_mel": true,
     "num_quantiles" : 2,
     "boolean_encoding" : "onehot-dense",
-    "melkwargs_dict" : {"n_fft": 800, 
-                    "win_length": 320,
-                    "hop_length" : 160,
-                    "n_mels" : 75,
-                    "center" : false},
-    "data_path" : "PATH",
-    "train_path" : "PATH",
-    "test_path" : "PATH"
+    "n_fft": 800,
+    "win_length": 280,
+    "hop_length" : 100,
+    "n_mels" : 80,
+    "center" : false,
+    "class_type" : "vowel",
+    "out_path_x": "path",
+    "out_path_y": "path"
 }
