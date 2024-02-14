@@ -1,0 +1,33 @@
+Cross Validation Splits 
+randomly generated
+
+Split 1
+f11
+f2
+m7
+m6
+-------
+Split 2
+f1
+f3
+m1
+m8
+-------
+Split 3
+f6
+f9
+m3
+m4
+-------
+Split 4
+f10
+f5
+m2
+m9
+-------
+Split 5
+f7
+f4
+f8
+m5
+
