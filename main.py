@@ -14,7 +14,8 @@ from timeit import default_timer as timer
 
 if __name__ == "__main__":
 
-    #pyTsetlinMachine doesn't want one hot
+    #TODO add pickling of train/test acc per epoch, and final preds for use in f1/precision/recall scores, charts, etc.
+    # Also log the trian config files
     
  
     num_classes = 5

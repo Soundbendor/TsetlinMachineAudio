@@ -1,15 +1,4 @@
 import numpy as np
-from VocalSetDataset import VocalSetDataset
-from sklearn.preprocessing import KBinsDiscretizer
-from torchaudio.transforms import MFCC
-from torch import nn
-import json
-
-
-
-#TODO consider downsampling
-
-import numpy as np
 from tqdm import tqdm
 import librosa
 from librosa.feature import mfcc as MFCC
@@ -18,26 +7,64 @@ from pyTsetlinMachine.tm import MultiClassTsetlinMachine
 from pydub import AudioSegment
 import re
 import os
+import json
+import datetime
+import shutil
+
+def get_save_path(args, HEAD):
+    """Make save path
+    """
+    date = '{}'.format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') )
+    suffix = "{}_{}_{}".format(args[0], args[1], date)
+    result_path = os.path.join(HEAD, suffix)
+    return result_path
+
+
+#TODO consider downsampling
+#TODO Add log file
 
 def shrink_to_1_1(x,bit_depth):
-  return x/2**bit_depth
+    try:
+        iterator = iter(x)
+    except TypeError:
+        return x/2**bit_depth
+    else:
+        x_list = []
+        for i in x:
+            x_list.append(i/2**bit_depth)
+        return x_list
+
+def gen_mfccs(x,config):
+    mfcc_list = []
+    for arr in x:
+        mfccs = MFCC(y=arr, # librosa calls input to mfcc y
+                        sr=config["sample_rate"],
+                        n_mfcc=config["n_mfcc"],
+                        n_fft=config["n_fft"],
+                        hop_length=config["hop_length"],
+                        win_length=config["win_length"],
+                        n_mels=config["n_mels"],
+                        center=False)
+        if config["average_mfccs"] == True:
+            #TODO implement
+            pass
+        else:
+            mfcc_list.append(mfccs)
+    return mfcc_list
 
 def booleanize(x,booleanizer,config):
-  out_bools = []
-  for arr in x:
-    resized_x = shrink_to_1_1(arr,config["bit_depth"])
-    mfccs = MFCC(y=resized_x, # librosa calls input to mfcc y
-                sr=config["sample_rate"],
-                n_mfcc=config["n_mfcc"],
-                n_fft=config["n_fft"],
-                hop_length=config["hop_length"],
-                win_length=config["win_length"],
-                n_mels=config["n_mels"],
-                center=False)
+    # TODO booleanize only at very end of data? KWS paper says "[MFCC vector] can then be passed to booleanizer module"
+    # Which implies it is done per vector, by which I assume it means per file (since the "vector" has a time dimension)
+    if type(x) == list:
+        bool_list = []
+        for mfcc_vector in x:
+            x_bools = booleanizer.fit_transform(mfcc_vector.T)
+            bool_list.append(x_bools)
+        return bool_list
+    else:
+        x_bools = booleanizer.fit_transform(x.transpose(0,2,1)) 
     
-    x_bools = booleanizer.fit_transform(mfccs.T)
-    out_bools.append(x_bools.reshape(-1,1))
-  return out_bools
+    return x_bools
 
 
 
@@ -159,16 +186,32 @@ def process_audio(input_file,config):
 
 
 def process_directory(directory, booleanizer, config):
-  x_out = []
-  y_out = []
-  for root, dirs, files in os.walk(directory):
-      for file in files:
-          if file.endswith(".wav"):
-              x, y = process_audio(os.path.join(root, file), config)
-              x_bools = booleanize(x, booleanizer, config)
-              x_out += x_bools
-              y_out += y
-  return x_out, y_out
+    x_out = []
+    y_out = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".wav"):
+                x, y = process_audio(os.path.join(root, file), config)
+                resized_x = shrink_to_1_1(x,config["bit_depth"])
+                mfccs = gen_mfccs(resized_x,config)
+                if config["delay_bool"] == False:
+                    x_bools = booleanize(mfccs.T, booleanizer, config)
+                    x_out += x_bools
+                    y_out += y
+                else:
+                    x_out += mfccs
+                    y_out += y
+               
+                
+    if config["delay_bool"] == False:
+        return x_out,y_out
+    else:
+        mfcc_matrix = np.array(x_out)
+        bool_matrix = booleanize(mfcc_matrix,booleanizer,config)
+        return bool_matrix, y
+                
+
+
 
 
 def main():
@@ -176,25 +219,31 @@ def main():
     with open("config_npy.json", 'r') as f:
         config = json.load(f)
 
+
+    
   
     booleanizer = KBinsDiscretizer(n_bins=config["num_quantiles"],encode=config["boolean_encoding"])
 
-    DATA_PATH = current_directory
-    x_list, y_list = process_directory(DATA_PATH,booleanizer,config)
-    print(type(x_list),len(x_list))
-    x_file_path = "/content/X_data"
-    y_file_path = "/content/y_data"
+    DATA_PATH = config["data_path"]
+    X, Y = process_directory(DATA_PATH,booleanizer,config)
+    
 
 
+    x_file_path = get_save_path([config["class_type"],"X"],config["data_out_path"])
+    y_file_path = get_save_path([config["class_type"],"y"],config["data_out_path"])
+    log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') )")
+    shutil.copyfile("config_npy.json",log_name)
+    
 
+    if type(X) == list:
+        x_mat = np.vstack(X)
+    y_mat = np.vstack(Y)
 
-
-
-    x_mat = np.vstack(x_list)
-    y_mat = np.vstack(y_list)
 
     np.save(x_file_path,x_mat)
     np.save(y_file_path,y_mat)
+
+
 
 
 if __name__ == "__main__":

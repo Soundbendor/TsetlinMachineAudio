@@ -13,5 +13,10 @@
     "center" : false,
     "class_type" : "vowel",
     "out_path_x": "path",
-    "out_path_y": "path"
+    "out_path_y": "path",
+    "avg_mfccs": false,
+    "delay_bools": false,
+    "data_source" : "PATH",
+    "data_out_path" : "PATH",
+    "fold" : 0
 }
