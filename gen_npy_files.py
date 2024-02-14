@@ -6,11 +6,6 @@ from torch import nn
 import json
 
 
-#TODO add CV support
-#### Change labeling process to add sex:
-#### Stratify based on superlabel, e.g. m3, f5
-#### If i stratify based on singer, sex comes for free.
-#### But that isn't true for technique or vowel. So above strategy will just have to do.
 
 #TODO consider downsampling
 
