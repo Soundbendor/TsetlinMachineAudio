@@ -231,7 +231,7 @@ def main():
 
     x_file_path = get_save_path([config["class_type"],"X"],config["data_out_path"])
     y_file_path = get_save_path([config["class_type"],"y"],config["data_out_path"])
-    log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') )")
+    log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') )"))
     shutil.copyfile("config_npy.json",log_name)
     
 
