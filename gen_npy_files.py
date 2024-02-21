@@ -2,7 +2,6 @@ import numpy as np
 from tqdm import tqdm
 from librosa.feature import mfcc as MFCC
 from sklearn.preprocessing import KBinsDiscretizer
-from pyTsetlinMachine.tm import MultiClassTsetlinMachine
 from pydub import AudioSegment
 import re
 import os
