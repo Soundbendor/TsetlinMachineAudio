@@ -15,13 +15,13 @@ def get_save_path(args, HEAD):
     """Make save path
     """
     date = '{}'.format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') )
-    suffix = "{}_{}_{}".format(args[0], args[1], date)
+    suffix = "{}_{}_{}_{}".format(args[0], args[1], args[2], date)
     result_path = os.path.join(HEAD, suffix)
     return result_path
 
 
 #TODO consider downsampling
-#TODO Add log file
+
 
 def shrink_to_1_1(x,bit_depth):
     try:
@@ -46,23 +46,33 @@ def gen_mfccs(x,config):
                         n_mels=config["n_mels"],
                         center=False)
         if config["average_mfccs"] == True:
-            #TODO implement
-            pass
+            mean_mfccs = np.mean(mfccs,axis=1) # TODO correct axis?
+            mfcc_list.append(mean_mfccs)
         else:
             mfcc_list.append(mfccs)
     return mfcc_list
 
-def booleanize(x,booleanizer,config):
-    # TODO booleanize only at very end of data? KWS paper says "[MFCC vector] can then be passed to booleanizer module"
-    # Which implies it is done per vector, by which I assume it means per file (since the "vector" has a time dimension)
+def booleanize(x,booleanizer,config,train=True):
+    # TODO booleanize only at very end of data
+
     if type(x) == list:
         bool_list = []
-        for mfcc_vector in x:
-            x_bools = booleanizer.fit_transform(mfcc_vector.T)
-            bool_list.append(x_bools)
-        return bool_list
+        if train:
+            for mfcc_vector in x:
+                x_bools = booleanizer.fit_transform(mfcc_vector.T)
+                bool_list.append(x_bools)
+            return bool_list
+        else:
+            for mfcc_vector in x:
+                x_bools = booleanizer.transform(mfcc_vector.T)
+                bool_list.append(x_bools)
+            return bool_list
+
     else:
-        x_bools = booleanizer.fit_transform(x.transpose(0,2,1)) 
+        if train:
+            x_bools = booleanizer.fit_transform(x.transpose(0,2,1))
+        else:
+             x_bools = booleanizer.transform(x.transpose(0,2,1))
     
     return x_bools
 
@@ -185,7 +195,7 @@ def process_audio(input_file,config):
     return processed_segments, labels
 
 
-def process_directory(directory, booleanizer, config):
+def process_directory(directory, booleanizer, config, train=True):
     x_out = []
     y_out = []
     for root, dirs, files in os.walk(directory):
@@ -195,7 +205,7 @@ def process_directory(directory, booleanizer, config):
                 resized_x = shrink_to_1_1(x,config["bit_depth"])
                 mfccs = gen_mfccs(resized_x,config)
                 if config["delay_bool"] == False:
-                    x_bools = booleanize(mfccs.T, booleanizer, config)
+                    x_bools = booleanize(mfccs.T, booleanizer, config,train)
                     x_out += x_bools
                     y_out += y
                 else:
@@ -224,15 +234,14 @@ def main():
   
     booleanizer = KBinsDiscretizer(n_bins=config["num_quantiles"],encode=config["boolean_encoding"])
 
-    DATA_PATH = config["data_path"]
-    X, Y = process_directory(DATA_PATH,booleanizer,config)
+    # First do the training set.
+    TRAIN_DATA_PATH = config["train_directory"]
+    X, Y = process_directory(TRAIN_DATA_PATH,booleanizer,config)
     
 
-
-    x_file_path = get_save_path([config["class_type"],"X"],config["data_out_path"])
-    y_file_path = get_save_path([config["class_type"],"y"],config["data_out_path"])
-    log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') )"))
-    shutil.copyfile("config_npy.json",log_name)
+    x_file_path = get_save_path([config["class_type"],"X",config["fold"]],config["data_out_path"])
+    y_file_path = get_save_path([config["class_type"],"y",config["fold"]],config["data_out_path"])
+    
     
 
     if type(X) == list:
@@ -243,7 +252,23 @@ def main():
     np.save(x_file_path,x_mat)
     np.save(y_file_path,y_mat)
 
+    # Next the Test set using the same statistics as the train. (for booleanizer)
+    TEST_DATA_PATH = config["test_directory"]
+    test_X, test_Y = process_directory(TEST_DATA_PATH,booleanizer,config,train=False)
 
+    test_x_file_path = get_save_path([config["class_type"],"X_test",config["fold"]],config["data_out_path"])
+    test_y_file_path = get_save_path([config["class_type"],"y_test",config["fold"]],config["data_out_path"])
+    
+    if type(test_X) == list:
+        x_test_mat = np.vstack(test_X)
+    y_test_mat = np.vstack(test_Y)
+
+
+    np.save(test_x_file_path,x_test_mat)
+    np.save(test_y_file_path,y_test_mat)
+
+    log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') ))
+    shutil.copyfile("config_npy.json",log_name)
 
 
 if __name__ == "__main__":

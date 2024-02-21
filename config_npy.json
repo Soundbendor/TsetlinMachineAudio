@@ -15,8 +15,9 @@
     "out_path_x": "path",
     "out_path_y": "path",
     "avg_mfccs": false,
-    "delay_bools": false,
-    "data_source" : "PATH",
+    "delay_bools": true,
+    "train_directory" : "PATH",
+    "test_directory" : "PATH",
     "data_out_path" : "PATH",
     "fold" : 0
 }
