@@ -199,7 +199,7 @@ def process_audio(input_file,config):
 def process_directory(directory, booleanizer, config, train=True):
     x_out = []
     y_out = []
-    for root, dirs, files in os.walk(directory):
+    for root, dirs, files in tqdm(os.walk(directory),desc="Directory Tree"):
         for file in files:
             if file.endswith(".wav"):
                 x, y = process_audio(os.path.join(root, file), config)
