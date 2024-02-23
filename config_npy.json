@@ -17,5 +17,5 @@
     "train_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/train_opt/",
     "test_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/test/",
     "data_out_path" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/",
-    "fold" : 0
+    "fold" : "test_fold"
 }

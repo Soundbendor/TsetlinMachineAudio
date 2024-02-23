@@ -204,7 +204,7 @@ def process_directory(directory, booleanizer, config, train=True):
                 x, y = process_audio(os.path.join(root, file), config)
                 resized_x = shrink_to_1_1(x,config["bit_depth"])
                 mfccs = gen_mfccs(resized_x,config)
-                if config["delay_bool"] == False:
+                if config["delay_bools"] == False:
                     x_bools = booleanize(mfccs.T, booleanizer, config,train)
                     x_out += x_bools
                     y_out += y
@@ -213,7 +213,7 @@ def process_directory(directory, booleanizer, config, train=True):
                     y_out += y
                
                 
-    if config["delay_bool"] == False:
+    if config["delay_bools"] == False:
         return x_out,y_out
     else:
         mfcc_matrix = np.array(x_out)
