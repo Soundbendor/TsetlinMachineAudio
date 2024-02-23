@@ -120,7 +120,7 @@ def process_audio(input_file,config):
                 id = int(match.group(2))-1
             else:
                 id = int(match.group(2))+10
-            label = (sex, id)
+            label = id
 
     elif class_type == "technique":
         file_pattern = r'(vibrato|straight|breathy|vocal_fry|lip_trill|trill|trillo|inhaled|belt|spoken)'
@@ -177,11 +177,13 @@ def process_audio(input_file,config):
             assert padded_seg.shape[0] == config["seg_length"] , f"Padding failed: Frames = {padded_seg.sahpe[0]}, input = {num_frames}, curr_file: {input_file}"
             
             processed_segments.append(padded_seg)
+            labels.append(label)
 
         # If segment is exactly correct
         elif int(num_frames) == config["seg_length"]:
             print(f"Segment {i} length correct. Length: {num_frames}")
             processed_segments.append(np.array(segment.get_array_of_samples(),dtype=np.float32))
+            labels.append(label)
 
         # If segment needs to be trimmed down
         elif int(num_frames) > config["seg_length"]:
@@ -195,13 +197,14 @@ def process_audio(input_file,config):
 
     
             processed_segments.append(trimmed)
+            labels.append(label)
         else:
             raise AttributeError("Unknown error. Check number of frames, format, etc.")
         if len(processed_segments) > 0:
           assert processed_segments[-1].shape[0] == config["seg_length"], f"Most recent segment wrong length: {processed_segments[-1].shape[0]}"
 
-        # if no error raised, all if branches get a label, and all labels are identical
-        labels.append(label)
+        
+        
     return processed_segments, labels
 
 
@@ -281,8 +284,8 @@ def main():
     #np.save(test_x_file_path,test_X)
     #np.save(test_y_file_path,test_y)
 
-    #log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') ))
-    #shutil.copyfile("config_npy.json",log_name)
+    log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') ))
+    shutil.copyfile("config_npy.json",log_name)
 
 
 if __name__ == "__main__":
