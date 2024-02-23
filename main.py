@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # TODO rename
     X = np.load(config["train_x"])
     Y = np.load(config["train_y"]).reshape((-1,))
-    assert len(train_y.shape) == 1
+    assert len(Y.shape) == 1
 
     # TODO remove after debugging
     bound = int(0.8*X.shape[0])
