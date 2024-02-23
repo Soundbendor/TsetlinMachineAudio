@@ -20,7 +20,7 @@ if __name__ == "__main__":
     #TODO add pickling of train/test acc per epoch, and final preds for use in f1/precision/recall scores, charts, etc.
     # Also log the trian config files
     current_directory = os.getcwd()
-    with open("config_npy.json", 'r') as f:
+    with open("config_main.json", 'r') as f:
         config = json.load(f)
 
     # Data stuff

@@ -7,7 +7,7 @@
     "weights": false,
     "drop": false,
     "epochs": 75,
-    "train_x":"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_2024-02-22-19-26.npy",
+    "train_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_2024-02-22-19-26.npy",
     "test_x" : "path",
     "train_y" : "path",
     "test_y": "path"
