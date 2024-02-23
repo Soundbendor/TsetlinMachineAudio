@@ -24,11 +24,18 @@ if __name__ == "__main__":
         config = json.load(f)
 
     # Data stuff
-    
-    train_x = np.load(config["train_x"])
-    train_y = np.load(config["train_y"]).reshape((-1,))
+    # TODO rename
+    X = np.load(config["train_x"])
+    Y = np.load(config["train_y"]).reshape((-1,))
     assert len(train_y.shape) == 1
 
+    # TODO remove after debugging
+    bound = int(0.8*X.shape[0])
+    train_x = X[:bound]
+    val_x = X[bound:]
+    by = int(0.8*Y.shape[0])
+    train_y = Y[:bound]
+    val_y = Y[bound:]
     #val_x = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/val_X.npy")
     #val_y = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/val_y.npy")
  
@@ -47,19 +54,23 @@ if __name__ == "__main__":
                                             incremental=True)
   
     #epochs = config["epochs"]
-    epochs = 5
+    epochs = 2
     #train loop
     train_accuracy_list = []
+    val_accuracy_list = []
     for e in tqdm(range(epochs)):
         model.fit(train_x,train_y,epochs=1,incremental=True)
         train_preds = model.predict(train_x)
+        val_preds = model.predict(val_x)
         print(f"predictions of shape: {train_preds.shape}, first element: {train_preds[0]}")
         
         train_acc = np.mean(train_preds == train_y)
         train_accuracy_list.append(train_acc)
+        val_acc = np.mean(val_preds == val_y)
+        val_accuracy_list.append(val_acc)
 
     plt.plot(np.arange(epochs),train_accuracy_list)
-    plt.title("Train Accuracy")
+    plt.title("Train and Val Accuracy on Small dataset")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
     plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/debug_train_acc.png")
