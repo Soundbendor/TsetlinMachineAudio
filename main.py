@@ -51,7 +51,7 @@ if __name__ == "__main__":
     model = MultiClassTsetlinMachine(number_clauses,T,s,number_of_state_bits=state_bits)
     #train loop
     train_accuracy_list = []
-    for e in tqdm(range(epochs):)
+    for e in tqdm(range(epochs)):
         model.fit(train_x,train_y,epochs=1,incremental=True)
         train_preds = model.predict(train_x)
         train_acc = np.mean(train_preds == train_y)
