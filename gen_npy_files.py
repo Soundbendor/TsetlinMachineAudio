@@ -234,7 +234,7 @@ def process_directory(directory, booleanizer, config, train=True):
     else:
         mfcc_matrix = np.array(x_out)
         bool_matrix = booleanize(mfcc_matrix,booleanizer,config)
-        return bool_matrix, y
+        return bool_matrix, y_out
                 
 
 
