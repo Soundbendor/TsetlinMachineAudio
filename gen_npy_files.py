@@ -43,7 +43,7 @@ def gen_mfccs(x,config):
                         win_length=config["win_length"],
                         n_mels=config["n_mels"],
                         center=False)
-        if config["average_mfccs"] == True:
+        if config["avg_mfccs"] == True:
             mean_mfccs = np.mean(mfccs,axis=1) # TODO correct axis?
             mfcc_list.append(mean_mfccs)
         else:

@@ -12,7 +12,7 @@
     "n_mels" : 80,
     "center" : false,
     "class_type" : "vowel",
-     "avg_mfccs": false,
+    "avg_mfccs": false,
     "delay_bools": true,
     "train_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/train_opt/",
     "test_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/test/",
