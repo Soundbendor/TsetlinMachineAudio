@@ -67,11 +67,21 @@ def booleanize(x,booleanizer,config,train=True):
             return bool_list
 
     else:
-        if train:
-            x_bools = booleanizer.fit_transform(x.transpose(0,2,1))
-        else:
-             x_bools = booleanizer.transform(x.transpose(0,2,1))
-    
+        if len(x.shape) > 2:
+            n,m,t = x.shape
+            x = x.transpose(0,2,1)
+            x = x.reshape(n*t,m)
+            if train:
+                x_bools = booleanizer.fit_transform(x)
+                x_bools = x_bools.reshape(n,t*m*config["num_quantiles"])
+            else:
+                x_bools = booleanizer.transform(x)
+                x_bools = x_bools.reshape(n,t*m*config["num_quantiles"])
+        elif len(x.shape) == 2:
+            if train:
+                x_bools = booleanizer.fit_transform(x)
+            else:
+                x_bools = booleanizer.transform(x)
     return x_bools
 
 
