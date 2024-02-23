@@ -5,8 +5,8 @@ import os
 import json
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
-
-
+import logging
+logging.getLogger('matplotlib').setLevel(logging.WARNING)
 #neptune starts here
 
 from timeit import default_timer as timer
@@ -62,6 +62,7 @@ if __name__ == "__main__":
     plt.title("Train Accuracy")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
+    plt.show()
 
     conf_m = confusion_matrix(train_y,train_preds)
     print(conf_m)
