@@ -208,9 +208,12 @@ def process_audio(input_file,config):
 def process_directory(directory, booleanizer, config, train=True):
     x_out = []
     y_out = []
+    file_count = 0
     for root, dirs, files in tqdm(os.walk(directory),desc="Directory Tree"):
         for file in files:
             if file.endswith(".wav"):
+                file_count += 1
+
                 x, y = process_audio(os.path.join(root, file), config)
                 resized_x = shrink_to_1_1(x,config["bit_depth"])
                 mfccs = gen_mfccs(resized_x,config)
@@ -222,7 +225,7 @@ def process_directory(directory, booleanizer, config, train=True):
                     x_out += mfccs
                     y_out += y
                
-                
+    print(f"Files processed: {file_count}")          
     if config["delay_bools"] == False:
         return x_out,y_out
     else:
@@ -251,34 +254,35 @@ def main():
 
     x_file_path = get_save_path([config["class_type"],"X",config["fold"]],config["data_out_path"])
     y_file_path = get_save_path([config["class_type"],"y",config["fold"]],config["data_out_path"])
-    
-    
+       
 
     if type(X) == list:
-        x_mat = np.vstack(X)
-    y_mat = np.vstack(Y)
+        X = np.vstack(X)
+    Y = np.vstack(Y)
 
 
-    np.save(x_file_path,x_mat)
-    np.save(y_file_path,y_mat)
+    np.save(x_file_path,X)
+    np.save(y_file_path,Y)
+
+    print(f"Training data processed: final shape of training X: {X.shape} and Y: {Y.shape}")
 
     # Next the Test set using the same statistics as the train. (for booleanizer)
-    TEST_DATA_PATH = config["test_directory"]
-    test_X, test_Y = process_directory(TEST_DATA_PATH,booleanizer,config,train=False)
+    #TEST_DATA_PATH = config["test_directory"]
+    #test_X, test_Y = process_directory(TEST_DATA_PATH,booleanizer,config,train=False)
 
-    test_x_file_path = get_save_path([config["class_type"],"X_test",config["fold"]],config["data_out_path"])
-    test_y_file_path = get_save_path([config["class_type"],"y_test",config["fold"]],config["data_out_path"])
+    #test_x_file_path = get_save_path([config["class_type"],"X_test",config["fold"]],config["data_out_path"])
+    #test_y_file_path = get_save_path([config["class_type"],"y_test",config["fold"]],config["data_out_path"])
     
-    if type(test_X) == list:
-        x_test_mat = np.vstack(test_X)
-    y_test_mat = np.vstack(test_Y)
+    #if type(test_X) == list:
+    #    test_X = np.vstack(test_X)
+    #test_y = np.vstack(test_Y)
 
 
-    np.save(test_x_file_path,x_test_mat)
-    np.save(test_y_file_path,y_test_mat)
+    #np.save(test_x_file_path,test_X)
+    #np.save(test_y_file_path,test_y)
 
-    log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') ))
-    shutil.copyfile("config_npy.json",log_name)
+    #log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') ))
+    #shutil.copyfile("config_npy.json",log_name)
 
 
 if __name__ == "__main__":
