@@ -47,7 +47,7 @@ if __name__ == "__main__":
                                             incremental=True)
   
     #epochs = config["epochs"]
-    epochs = 2
+    epochs = 5
     #train loop
     train_accuracy_list = []
     for e in tqdm(range(epochs)):
