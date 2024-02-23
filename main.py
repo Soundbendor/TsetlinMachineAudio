@@ -69,7 +69,8 @@ if __name__ == "__main__":
         val_acc = np.mean(val_preds == val_y)
         val_accuracy_list.append(val_acc)
 
-    plt.plot(np.arange(epochs),train_accuracy_list)
+    plt.plot(np.arange(epochs),train_accuracy_list,label="Train")
+    plt.plot(np.arange(epochs),val_accuracy_list,label="val")
     plt.title("Train and Val Accuracy on Small dataset")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
