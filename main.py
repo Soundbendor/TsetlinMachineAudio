@@ -54,7 +54,7 @@ if __name__ == "__main__":
                                             incremental=True)
   
     #epochs = config["epochs"]
-    epochs = 2
+    epochs = 20
     #train loop
     train_accuracy_list = []
     val_accuracy_list = []
