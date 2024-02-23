@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # Data stuff
     
     train_x = np.load(config["train_x"])
-    train_y = np.load(config["train_y"])
+    train_y = np.load(config["train_y"]).reshape((-1,))
     assert len(train_y.shape) == 1
 
     #val_x = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/val_X.npy")
