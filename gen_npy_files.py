@@ -215,7 +215,7 @@ def process_audio(input_file,config,verbose=False):
     return processed_segments, labels
 
 
-def process_directory(directory, booleanizer, config, train=True):
+def process_directory(directory, booleanizer, config, train=True,verbose=False):
     x_out = []
     y_out = []
     file_count = 0
@@ -224,7 +224,7 @@ def process_directory(directory, booleanizer, config, train=True):
             if file.endswith(".wav"):
                 file_count += 1
 
-                x, y = process_audio(os.path.join(root, file), config)
+                x, y = process_audio(os.path.join(root, file), config, verbose=verbose)
                 resized_x = shrink_to_1_1(x,config["bit_depth"])
                 mfccs = gen_mfccs(resized_x,config)
                 if config["delay_bools"] == False:
