@@ -259,7 +259,7 @@ def main():
 
     # First do the training set.
     TRAIN_DATA_PATH = config["train_directory"]
-    X, Y = process_directory(TRAIN_DATA_PATH,booleanizer,config,verbose=False)
+    X, Y = process_directory(TRAIN_DATA_PATH,booleanizer,config,verbose=True)
     
 
     x_file_path = get_save_path([config["class_type"],"X",config["fold"]],config["data_out_path"])
