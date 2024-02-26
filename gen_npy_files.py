@@ -8,6 +8,7 @@ import os
 import json
 import datetime
 import shutil
+import warnings
 
 def get_save_path(args, HEAD):
     """Make save path
@@ -108,7 +109,9 @@ def process_audio(input_file,config,verbose=False):
             vowel = match.group(1)
             vowel_to_class = {'a': 0, 'e': 1, 'i': 2, 'o': 3, 'u': 4}
             label = vowel_to_class.get(vowel)
-
+        else:
+            #warnings.warn(f"No vowel match found in file: {input_file}")
+            raise ValueError(f"No vowel match found in file: {input_file}")
     elif class_type == "singer":
         file_pattern = r'(male|female)([0-9][0-1]?|[0-9][0-1]?)'
         match = re.search(file_pattern, input_file)
