@@ -3,6 +3,7 @@ from tqdm import tqdm
 from librosa.feature import mfcc as MFCC
 from sklearn.preprocessing import KBinsDiscretizer
 from pydub import AudioSegment
+import memory_profiler
 import re
 import os
 import json
@@ -222,7 +223,7 @@ def process_audio(input_file,config,verbose=False):
         
     return processed_segments, labels
 
-
+@profile
 def process_directory(directory, booleanizer, config, train=True,verbose=False):
     x_out = []
     y_out = []
@@ -237,10 +238,10 @@ def process_directory(directory, booleanizer, config, train=True,verbose=False):
                     continue
                 else:
                     x, y = result
-                resized_x = shrink_to_1_1(x,config["bit_depth"])
-                mfccs = gen_mfccs(resized_x,config)
+                x = shrink_to_1_1(x,config["bit_depth"])
+                mfccs = gen_mfccs(x,config)
                 if config["delay_bools"] == False:
-                    x_bools = booleanize(mfccs.T, booleanizer, config,train)
+                    x_bools = booleanize(mfccs.T, booleanizer, config, train)
                     x_out += x_bools
                     y_out += y
                 else:
@@ -251,9 +252,9 @@ def process_directory(directory, booleanizer, config, train=True,verbose=False):
     if config["delay_bools"] == False:
         return x_out,y_out
     else:
-        mfcc_matrix = np.array(x_out)
-        bool_matrix = booleanize(mfcc_matrix,booleanizer,config)
-        return bool_matrix, y_out
+        x_out = np.array(x_out) # overwrite to save memory
+        x_out = booleanize(x_out,booleanizer,config)
+        return x_out, y_out
                 
 
 
