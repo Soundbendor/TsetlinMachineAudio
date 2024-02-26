@@ -87,7 +87,7 @@ def booleanize(x,booleanizer,config,train=True):
 
 
 
-def process_audio(input_file,config):
+def process_audio(input_file,config,verbose=False):
     valid_class_types = {"vowel","singer","technique"}
     class_type = config["class_type"]
     if class_type not in valid_class_types:
@@ -103,7 +103,8 @@ def process_audio(input_file,config):
         file_pattern = r'_([aeiou]).wav'
         match = re.search(file_pattern, input_file)
         if match:
-            print(f"Pattern match found: {match.group(1)}")
+            if verbose:
+                print(f"Pattern match found: {match.group(1)}")
             vowel = match.group(1)
             vowel_to_class = {'a': 0, 'e': 1, 'i': 2, 'o': 3, 'u': 4}
             label = vowel_to_class.get(vowel)
@@ -113,7 +114,8 @@ def process_audio(input_file,config):
         match = re.search(file_pattern, input_file)
         # male [0-10], female[11-19]
         if match:
-            print(f"Pattern match found: {match.group(1)}")
+            if verbose:
+                print(f"Pattern match found: {match.group(1)}")
             sex_to_class = {'male':0,'female':1}
             sex = sex_to_class[match.group(1)]
             if sex == 0:
@@ -126,7 +128,8 @@ def process_audio(input_file,config):
         file_pattern = r'(vibrato|straight|breathy|vocal_fry|lip_trill|trill|trillo|inhaled|belt|spoken)'
         match = re.search(file_pattern, input_file)
         if match:
-            print(f"Pattern match found: {match.group(1)}")
+            if verbose:
+                print(f"Pattern match found: {match.group(1)}")
             tech_to_class = {
                 'vibrato': 0,
                 'straight': 1,
@@ -162,14 +165,16 @@ def process_audio(input_file,config):
 
         # skip segment if too small 3/4 is the cutoff
         if num_frames <= int(3/4 * config["seg_length"]):
-            print(f"Segment {i} discarded: {num_frames} less than {int(3/4 * config['seg_length'])}")
+            if verbose:
+                print(f"Segment {i} discarded: {num_frames} less than {int(3/4 * config['seg_length'])}")
             pass
 
 
 
         # Pad with silence if segment is almost long enough
         elif num_frames < config["seg_length"]:
-            print(f"Segment {i} too small, padding length: {num_frames} / {config['seg_length']}")
+            if verbose:
+                print(f"Segment {i} too small, padding length: {num_frames} / {config['seg_length']}")
             # convert to numpy:
             seg_array = np.array(segment.get_array_of_samples(),dtype=np.float32)
             frames_needed = int(config["seg_length"] - num_frames) # convert from float
@@ -181,13 +186,15 @@ def process_audio(input_file,config):
 
         # If segment is exactly correct
         elif int(num_frames) == config["seg_length"]:
-            print(f"Segment {i} length correct. Length: {num_frames}")
+            if verbose:
+                print(f"Segment {i} length correct. Length: {num_frames}")
             processed_segments.append(np.array(segment.get_array_of_samples(),dtype=np.float32))
             labels.append(label)
 
         # If segment needs to be trimmed down
         elif int(num_frames) > config["seg_length"]:
-            print(f"Segment {i} too large. Length: {num_frames}. Trimming.")
+            if verbose:
+                print(f"Segment {i} too large. Length: {num_frames}. Trimming.")
             
             #convert to numpy
             seg_array = np.array(segment.get_array_of_samples(),dtype=np.float32)
@@ -252,7 +259,7 @@ def main():
 
     # First do the training set.
     TRAIN_DATA_PATH = config["train_directory"]
-    X, Y = process_directory(TRAIN_DATA_PATH,booleanizer,config)
+    X, Y = process_directory(TRAIN_DATA_PATH,booleanizer,config,verbose=False)
     
 
     x_file_path = get_save_path([config["class_type"],"X",config["fold"]],config["data_out_path"])
@@ -270,19 +277,19 @@ def main():
     print(f"Training data processed: final shape of training X: {X.shape} and Y: {Y.shape}")
 
     # Next the Test set using the same statistics as the train. (for booleanizer)
-    #TEST_DATA_PATH = config["test_directory"]
-    #test_X, test_Y = process_directory(TEST_DATA_PATH,booleanizer,config,train=False)
+    TEST_DATA_PATH = config["test_directory"]
+    test_X, test_Y = process_directory(TEST_DATA_PATH,booleanizer,config,train=False)
 
-    #test_x_file_path = get_save_path([config["class_type"],"X_test",config["fold"]],config["data_out_path"])
-    #test_y_file_path = get_save_path([config["class_type"],"y_test",config["fold"]],config["data_out_path"])
+    test_x_file_path = get_save_path([config["class_type"],"X_test",config["fold"]],config["data_out_path"])
+    test_y_file_path = get_save_path([config["class_type"],"y_test",config["fold"]],config["data_out_path"])
     
-    #if type(test_X) == list:
-    #    test_X = np.vstack(test_X)
-    #test_y = np.vstack(test_Y)
+    if type(test_X) == list:
+        test_X = np.vstack(test_X)
+    test_y = np.vstack(test_Y)
 
 
-    #np.save(test_x_file_path,test_X)
-    #np.save(test_y_file_path,test_y)
+    np.save(test_x_file_path,test_X)
+    np.save(test_y_file_path,test_y)
 
     log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') ))
     shutil.copyfile("config_npy.json",log_name)
