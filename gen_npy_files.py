@@ -110,8 +110,8 @@ def process_audio(input_file,config,verbose=False):
             vowel_to_class = {'a': 0, 'e': 1, 'i': 2, 'o': 3, 'u': 4}
             label = vowel_to_class.get(vowel)
         else:
-            #warnings.warn(f"No vowel match found in file: {input_file}")
-            raise ValueError(f"No vowel match found in file: {input_file}")
+            warnings.warn(f"No vowel match found in file: {input_file}")
+            return None
     elif class_type == "singer":
         file_pattern = r'(male|female)([0-9][0-1]?|[0-9][0-1]?)'
         match = re.search(file_pattern, input_file)
@@ -126,7 +126,9 @@ def process_audio(input_file,config,verbose=False):
             else:
                 id = int(match.group(2))+10
             label = id
-
+        else:
+            warnings.warn(f"No singer match found in file: {input_file}")
+            return None
     elif class_type == "technique":
         file_pattern = r'(vibrato|straight|breathy|vocal_fry|lip_trill|trill|trillo|inhaled|belt|spoken)'
         match = re.search(file_pattern, input_file)
@@ -146,6 +148,9 @@ def process_audio(input_file,config,verbose=False):
                 'spoken': 9
             }
             label = tech_to_class[match.group(1)]
+        else:
+            warnings.warn(f"No technique match found in file: {input_file}")
+            return None
     else:
         raise ValueError("No classification type found.")
 
@@ -227,7 +232,11 @@ def process_directory(directory, booleanizer, config, train=True,verbose=False):
             if file.endswith(".wav"):
                 file_count += 1
 
-                x, y = process_audio(os.path.join(root, file), config, verbose=verbose)
+                result = process_audio(os.path.join(root, file), config, verbose=verbose)
+                if result is None:
+                    continue
+                else:
+                    x, y = result
                 resized_x = shrink_to_1_1(x,config["bit_depth"])
                 mfccs = gen_mfccs(resized_x,config)
                 if config["delay_bools"] == False:
