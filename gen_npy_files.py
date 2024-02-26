@@ -278,7 +278,7 @@ def main():
 
     # Next the Test set using the same statistics as the train. (for booleanizer)
     TEST_DATA_PATH = config["test_directory"]
-    test_X, test_Y = process_directory(TEST_DATA_PATH,booleanizer,config,train=False)
+    test_X, test_Y = process_directory(TEST_DATA_PATH,booleanizer,config,train=False,verbose=True)
 
     test_x_file_path = get_save_path([config["class_type"],"X_test",config["fold"]],config["data_out_path"])
     test_y_file_path = get_save_path([config["class_type"],"y_test",config["fold"]],config["data_out_path"])
