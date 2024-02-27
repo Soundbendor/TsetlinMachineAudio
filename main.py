@@ -24,20 +24,13 @@ if __name__ == "__main__":
         config = json.load(f)
 
     # Data stuff
-    # TODO rename
-    X = np.load(config["train_x"])
-    Y = np.load(config["train_y"]).reshape((-1,))
-    assert len(Y.shape) == 1
+    
+    train_x = np.load(config["train_x"])
+    train_y = np.load(config["train_y"]).reshape((-1,))
+    assert len(train_y.shape) == 1
 
-    # TODO remove after debugging
-    bound = int(0.8*X.shape[0])
-    train_x = X[:bound]
-    val_x = X[bound:]
-    by = int(0.8*Y.shape[0])
-    train_y = Y[:bound]
-    val_y = Y[bound:]
-    #val_x = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/val_X.npy")
-    #val_y = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/val_y.npy")
+    val_x = np.load(config["test_x"])
+    val_y = np.load(config["test_y"])
  
     num_classes = config["num_classes"]
     number_clauses = config["clauses"]
@@ -76,7 +69,7 @@ if __name__ == "__main__":
     plt.ylabel("Accuracy")
     plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/fold_1_train_acc.png")
 
-    conf_m = confusion_matrix(train_y,train_preds)
+    conf_m = confusion_matrix(train_y,train_preds)/val_y.shape[0]
     print(conf_m)
 
 

@@ -1,6 +1,6 @@
 {
     "num_classes": 5,
-    "T": 80,
+    "T": 40,
     "s": 14,
     "clauses": 500,
     "state_bits": 100,
