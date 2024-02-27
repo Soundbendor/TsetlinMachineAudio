@@ -74,7 +74,7 @@ if __name__ == "__main__":
     plt.title("Train and Val Accuracy on Small dataset")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
-    plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/debug_train_acc.png")
+    plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/fold_1_train_acc.png")
 
     conf_m = confusion_matrix(train_y,train_preds)
     print(conf_m)
