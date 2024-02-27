@@ -223,7 +223,7 @@ def process_audio(input_file,config,verbose=False):
         
     return processed_segments, labels
 
-@profile
+#@profile
 def process_directory(directory, booleanizer, config, train=True,verbose=False):
     x_out = []
     y_out = []
@@ -272,7 +272,7 @@ def main():
 
     # First do the training set.
     TRAIN_DATA_PATH = config["train_directory"]
-    X, Y = process_directory(TRAIN_DATA_PATH,booleanizer,config,verbose=True)
+    X, Y = process_directory(TRAIN_DATA_PATH,booleanizer,config,verbose=False)
     
 
     x_file_path = get_save_path([config["class_type"],"X",config["fold"]],config["data_out_path"])
