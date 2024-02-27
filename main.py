@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     plt.plot(np.arange(epochs),train_accuracy_list,label="Train")
     plt.plot(np.arange(epochs),val_accuracy_list,label="val")
-    plt.title("Train and Val Accuracy on Small dataset")
+    plt.title("Train and Val Accuracy")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
     plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/fold_1_train_acc.png")
