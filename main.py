@@ -6,7 +6,7 @@ import json
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import logging
-logging.getLogger('matplotlib').setLevel(logging.WARNING)
+
 import pickle
 import datetime
 
@@ -14,6 +14,8 @@ import datetime
 import neptune
 
 
+logging.getLogger('matplotlib').setLevel(logging.WARNING)
+logging.getLogger("neptune").setLevel(logging.WARNING)
 def get_save_path(args, HEAD):
     """Make save path
     """
