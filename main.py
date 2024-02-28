@@ -15,7 +15,7 @@ import neptune
 
 
 logging.getLogger('matplotlib').setLevel(logging.WARNING)
-logging.getLogger("neptune").setLevel(logging.WARNING)
+logging.getLogger("neptune").setLevel(logging.CRITICAL)
 def get_save_path(args, HEAD):
     """Make save path
     """
@@ -32,7 +32,7 @@ def main(params: dict, config_path=None):
     run = neptune.init_run(
         project="mccabepe/TMAudio",
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
-        mode="sync"
+   
     ) 
 
     if config_path is not None:
