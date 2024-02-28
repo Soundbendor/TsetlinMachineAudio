@@ -86,29 +86,27 @@ def main(params: dict, config_path=None):
         train_accuracy_list.append(train_acc)
         val_acc = np.mean(val_preds == val_y)
         val_accuracy_list.append(val_acc)
+        run["train/acc"].append(train_acc)
+        run["test/acc"].append(val_acc)
 
-    plt.plot(np.arange(epochs),train_accuracy_list,label="Train")
-    plt.plot(np.arange(epochs),val_accuracy_list,label="val")
-    plt.title("Train and Val Accuracy")
-    plt.xlabel("Epochs")
-    plt.ylabel("Accuracy")
-    plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/vowel_fold_1_tune.png")
+    #plt.plot(np.arange(epochs),train_accuracy_list,label="Train")
+    #plt.plot(np.arange(epochs),val_accuracy_list,label="val")
+    #plt.title("Train and Val Accuracy")
+    #plt.xlabel("Epochs")
+    #plt.ylabel("Accuracy")
+    #plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/vowel_fold_1_tune.png")
 
     conf_m = np.round(confusion_matrix(train_y,train_preds)/val_y.shape[0], decimals=2)
     print(conf_m)
     
     # Bookkeeping stuff here:
     pickle_path = config["pickle_path"]
-    model_path = get_save_path(["TM"],pickle_path)
-    train_path = get_save_path(["Train_acc_list"],pickle_path)
-    val_path = get_save_path(["Val_acc_list"], pickle_path)
+    pickle_file = get_save_path(["pickled_data"],pickle_path)
 
-    pickle.dump(model,model_path,"wb")
-    pickle.dump(train_accuracy_list,train_path)
-    pickle.dump(val_accuracy_list,val_path)
-    
-    run["train/acc"] = train_accuracy_list
-    run["test/acc"] = val_accuracy_list
+    to_pickle = [model, train_accuracy_list, val_accuracy_list]
+    with open(pickle_file,"wb") as f:
+        pickle.dump(to_pickle,f)
+ 
     run.stop()
 
 if __name__ == "__main__":
