@@ -1,5 +1,4 @@
 {
-    "num_classes": 5,
     "T": 10,
     "s": 5,
     "clauses": 1000,

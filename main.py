@@ -25,17 +25,25 @@ def get_save_path(args, HEAD):
 
 
 
-def main():
+def main(params: dict, config_path=None):
 
     run = neptune.init_run(
         project="mccabepe/TMAudio",
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
+        mode="sync"
     ) 
 
-    current_directory = os.getcwd()
-    with open("config_main.json", 'r') as f:
-        config = json.load(f)
-
+    if config_path is not None:
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+    else:
+        config={ 
+                    "train_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_1_2024-02-26-16-38.npy",
+                    "test_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_1_2024-02-26-16-49.npy",
+                    "train_y" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_1_2024-02-26-16-38.npy",
+                    "test_y": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_1_2024-02-26-16-49.npy",
+                    "pickle_path": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/Vowels/"          
+        }
     # Data stuff
     
     train_x = np.load(config["train_x"])
@@ -45,15 +53,15 @@ def main():
     val_x = np.load(config["test_x"])
     val_y = np.load(config["test_y"]).reshape(-1,)
  
-    num_classes = config["num_classes"]
-    number_clauses = config["clauses"]
-    s = config["s"]
-    T = config["T"]
-    state_bits = config["state_bits"]
-    #integer_weighted = ["weights"]
-    #drop_clause = ["drop"]
+  
+    number_clauses = params["clauses"]
+    s = params["s"]
+    T = params["T"]
+    state_bits = params["state_bits"]
+    #integer_weighted = params["weights"]
+    #drop_clause = params["drop"]
     # Many more optional parameters
-    params = {"s": s, "T": T,"clauses":number_clauses, "state_bits":state_bits}
+ 
     run["parameters"] = params
 
     model = vanilla_classifier.TMClassifier(number_clauses, 
@@ -63,8 +71,8 @@ def main():
                                             incremental=True,
                                             seed=1066)
   
-    #epochs = config["epochs"]
-    epochs = 10
+    epochs = params["epochs"]
+    #epochs = 10
     #train loop
     train_accuracy_list = []
     val_accuracy_list = []
@@ -104,7 +112,16 @@ def main():
     run.stop()
 
 if __name__ == "__main__":
-    main()
+    #clauses = [1000,5000,10000]
+    #Ts = [10,20,30,40]
+    #ss = [5, 10, 25]
+    epochs=1
+    params = {"clauses": 1000,
+              "T": 10,
+              "s":5,
+              "epochs":epochs
+              }
+    main(params)
 
   
 
