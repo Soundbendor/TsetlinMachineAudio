@@ -32,7 +32,7 @@ def main(params: dict, config_path=None):
     run = neptune.init_run(
         project="mccabepe/TMAudio",
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
-   
+        custom_run_id=f"Tuning_run_{params["id"]}"
     ) 
 
     if config_path is not None:
@@ -112,17 +112,24 @@ def main(params: dict, config_path=None):
     run.stop()
 
 if __name__ == "__main__":
-    #clauses = [1000,5000,10000]
-    #Ts = [10,20,30,40]
-    #ss = [5, 10, 25]
-    epochs=1
-    params = {"clauses": 1000,
-              "T": 10,
-              "s":5,
-              "state_bits" : 100,
-              "epochs":epochs
-              }
-    main(params)
+
+    clauses = [1000,5000,10000]
+    Ts = [10,20,30,40]
+    ss = [5, 10, 25]
+    epochs=10
+    id=0
+    for c in clauses:
+        for T in Ts:
+            for s in ss:
+                id += 1
+                params = {"clauses": c,
+                        "T": T,
+                        "s":s,
+                        "state_bits" : 100,
+                        "epochs":epochs,
+                        "id" : id
+                        }
+                main(params)
 
   
 
