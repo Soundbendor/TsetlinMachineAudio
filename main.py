@@ -25,10 +25,8 @@ def get_save_path(args, HEAD):
 
 
 
-if __name__ == "__main__":
+def main():
 
-    #TODO add pickling of train/test acc per epoch, and final preds for use in f1/precision/recall scores, charts, etc.
-    # TODO Also log the train config files
     current_directory = os.getcwd()
     with open("config_main.json", 'r') as f:
         config = json.load(f)
@@ -58,7 +56,7 @@ if __name__ == "__main__":
                                             seed=1066)
   
     #epochs = config["epochs"]
-    epochs = 2
+    epochs = 10
     #train loop
     train_accuracy_list = []
     val_accuracy_list = []
@@ -94,6 +92,8 @@ if __name__ == "__main__":
     pickle.dump(val_accuracy_list,val_path)
     
 
+if __name__ == "__main__":
+    main()
 
   
 

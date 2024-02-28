@@ -1,8 +1,8 @@
 {
     "num_classes": 5,
-    "T": 40,
-    "s": 14,
-    "clauses": 500,
+    "T": 10,
+    "s": 5,
+    "clauses": 1000,
     "state_bits": 100,
     "weights": false,
     "drop": false,

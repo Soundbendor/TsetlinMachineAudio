@@ -27,8 +27,8 @@ if __name__ == "__main__":
     train_X = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_1_2024-02-26-16-38.npy")
     train_y = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_1_2024-02-26-16-38.npy").reshape(-1,)
     model = TM()
-    g = GridSearchCV(model,param_grid,n_jobs=-1,cv=2,scoring="f1_weighted")
-    g.fit(train_X,train_y)
-    print(g.best_params_)
+   # g = GridSearchCV(model,param_grid,n_jobs=-1,cv=2,scoring="f1_weighted")
+   # g.fit(train_X,train_y)
+    #print(g.best_params_)
 
 
