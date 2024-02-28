@@ -11,7 +11,7 @@ import pickle
 import datetime
 
 #neptune starts here
-
+import neptune
 
 
 def get_save_path(args, HEAD):
@@ -26,6 +26,11 @@ def get_save_path(args, HEAD):
 
 
 def main():
+
+    run = neptune.init_run(
+        project="mccabepe/TMAudio",
+        api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
+    ) 
 
     current_directory = os.getcwd()
     with open("config_main.json", 'r') as f:
@@ -48,6 +53,9 @@ def main():
     #integer_weighted = ["weights"]
     #drop_clause = ["drop"]
     # Many more optional parameters
+    params = {"s": s, "T": T,"clauses":number_clauses, "state_bits":state_bits}
+    run["parameters"] = params
+
     model = vanilla_classifier.TMClassifier(number_clauses, 
                                             T=T,
                                             s=s,
@@ -91,6 +99,9 @@ def main():
     pickle.dump(train_accuracy_list,train_path)
     pickle.dump(val_accuracy_list,val_path)
     
+    run["train/acc"] = train_accuracy_list
+    run["test/acc"] = val_accuracy_list
+    run.stop()
 
 if __name__ == "__main__":
     main()
