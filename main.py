@@ -117,6 +117,7 @@ if __name__ == "__main__":
     params = {"clauses": 1000,
               "T": 10,
               "s":5,
+              "state_bits" : 100,
               "epochs":epochs
               }
     main(params)
