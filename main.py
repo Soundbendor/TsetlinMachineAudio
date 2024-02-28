@@ -84,7 +84,7 @@ def main():
     plt.title("Train and Val Accuracy")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
-    plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/vowel_fold_1.png")
+    plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/vowel_fold_1_tune.png")
 
     conf_m = np.round(confusion_matrix(train_y,train_preds)/val_y.shape[0], decimals=2)
     print(conf_m)
