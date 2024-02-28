@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.model_selection import GridSearchCV
-from tmu.models.classifier import vanilla_classifier
+from tmu.models.classification import vanilla_classifier
 
 
 
