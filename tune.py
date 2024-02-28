@@ -6,7 +6,7 @@ from tmu.models.classification import vanilla_classifier
 
 class TM: # TODO add more hyperparameters
     def __init__(self, clauses=1000,T=10,s=5,state_bits=100):
-        self.model = vanilla_classifier(clauses,T,s,number_of_state_bits_ta=state_bits)
+        self.model = vanilla_classifier.TMClassifier(clauses,T,s,number_of_state_bits_ta=state_bits)
     
     def fit(self, X, y):
         self.model.fit(X,y,epochs = 5)
