@@ -7,10 +7,20 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import logging
 logging.getLogger('matplotlib').setLevel(logging.WARNING)
+import pickle
+import datetime
+
 #neptune starts here
 
-from timeit import default_timer as timer
 
+
+def get_save_path(args, HEAD):
+    """Make save path
+    """
+    date = '{}'.format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') )
+    suffix = "{}_{}".format(args[0], date)
+    result_path = os.path.join(HEAD, suffix)
+    return result_path
 
 
 
@@ -18,7 +28,7 @@ from timeit import default_timer as timer
 if __name__ == "__main__":
 
     #TODO add pickling of train/test acc per epoch, and final preds for use in f1/precision/recall scores, charts, etc.
-    # Also log the train config files
+    # TODO Also log the train config files
     current_directory = os.getcwd()
     with open("config_main.json", 'r') as f:
         config = json.load(f)
@@ -44,7 +54,8 @@ if __name__ == "__main__":
                                             T=T,
                                             s=s,
                                             number_of_state_bits_ta=state_bits,
-                                            incremental=True)
+                                            incremental=True,
+                                            seed=1066)
   
     #epochs = config["epochs"]
     epochs = 2
@@ -71,6 +82,17 @@ if __name__ == "__main__":
 
     conf_m = np.round(confusion_matrix(train_y,train_preds)/val_y.shape[0], decimals=2)
     print(conf_m)
+    
+    # Bookkeeping stuff here:
+    pickle_path = config["pickle_path"]
+    model_path = get_save_path(["TM"],pickle_path)
+    train_path = get_save_path(["Train_acc_list"],pickle_path)
+    val_path = get_save_path(["Val_acc_list"], pickle_path)
+
+    pickle.dump(model,model_path,"wb")
+    pickle.dump(train_accuracy_list,train_path)
+    pickle.dump(val_accuracy_list,val_path)
+    
 
 
   
