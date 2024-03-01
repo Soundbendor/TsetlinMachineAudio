@@ -10,7 +10,7 @@ import logging
 import pickle
 import datetime
 
-#neptune starts here
+
 import neptune
 
 
@@ -26,7 +26,7 @@ def get_save_path(args, HEAD):
 
 
 
-
+@profile
 def main(params: dict, config_path=None):
 
     run = neptune.init_run(
