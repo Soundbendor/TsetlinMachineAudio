@@ -114,9 +114,9 @@ def main(params: dict, config_path=None):
 
 if __name__ == "__main__":
 
-    clauses = [5000,10000]
-    Ts = [10,20,30,40]
-    ss = [5, 10, 25]
+    clauses = [1000] # 10000
+    Ts = [10] # 20,30,40
+    ss = [5] #  10, 25
     epochs=10
     id=0
     for c in clauses:
