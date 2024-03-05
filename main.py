@@ -72,6 +72,7 @@ def main(params: dict, config_path=None):
                                             s=s,
                                             number_of_state_bits_ta=state_bits,
                                             incremental=True,
+                                            platform='GPU',
                                             seed=1066)
   
     epochs = params["epochs"]
@@ -89,9 +90,10 @@ def main(params: dict, config_path=None):
         train_accuracy_list.append(train_acc)
         val_acc = np.mean(val_preds == val_y)
         val_accuracy_list.append(val_acc)
-        run["train/acc"].append(train_acc)
-        run["test/acc"].append(val_acc)
 
+
+    run["train/acc"].append(train_acc)
+    run["test/acc"].append(val_acc)
     #plt.plot(np.arange(epochs),train_accuracy_list,label="Train")
     #plt.plot(np.arange(epochs),val_accuracy_list,label="val")
     #plt.title("Train and Val Accuracy")
