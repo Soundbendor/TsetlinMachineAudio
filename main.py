@@ -33,7 +33,7 @@ def main(params: dict, config_path=None):
         project="mccabepe/TMAudio",
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
         custom_run_id=f"Tuning_run_{params['id']}",
-        mode="debug"
+        #mode="debug"
     ) 
 
     if config_path is not None:
@@ -105,21 +105,21 @@ def main(params: dict, config_path=None):
     print(conf_m)
     
     # Bookkeeping stuff here:
-    pickle_path = config["pickle_path"]
-    pickle_file = get_save_path(["pickled_data"],pickle_path)
+    #pickle_path = config["pickle_path"]
+   # pickle_file = get_save_path(["pickled_data"],pickle_path)
 
-    to_pickle = [model, train_accuracy_list, val_accuracy_list]
-    with open(pickle_file,"wb") as f:
-        pickle.dump(to_pickle,f)
+    #to_pickle = [model, train_accuracy_list, val_accuracy_list]
+    #with open(pickle_file,"wb") as f:
+    #    pickle.dump(to_pickle,f)
  
     run.stop()
 
 if __name__ == "__main__":
 
-    clauses = [5000] # 10000
-    Ts = [10] # 20,30,40
-    ss = [5] #  10, 25
-    epochs=1 
+    clauses = [1000,5000,10000] # 10000
+    Ts = [10,20,30,40] # 20,30,40
+    ss = [5,10,25] #  10, 25
+    epochs=10 
     id=0
     for c in clauses:
         for T in Ts:
