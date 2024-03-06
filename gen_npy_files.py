@@ -53,7 +53,7 @@ def gen_mfccs(x,config):
     return mfcc_list
 
 def booleanize(x,booleanizer,config,train=True):
-    # TODO booleanize only at very end of data
+
 
     if type(x) == list:
         bool_list = []
@@ -84,7 +84,7 @@ def booleanize(x,booleanizer,config,train=True):
                 x_bools = booleanizer.fit_transform(x)
             else:
                 x_bools = booleanizer.transform(x)
-    return x_bools
+    return x_bools.astype("?")
 
 
 
@@ -300,6 +300,7 @@ def main():
         test_X = np.vstack(test_X)
     test_y = np.vstack(test_Y)
 
+    #change datatype to booleans
 
     np.save(test_x_file_path,test_X)
     np.save(test_y_file_path,test_y)
