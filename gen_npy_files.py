@@ -300,8 +300,8 @@ def main():
         test_X = np.vstack(test_X)
     test_y = np.vstack(test_Y)
 
-    #change datatype to booleans
-
+ 
+ 
     np.save(test_x_file_path,test_X)
     np.save(test_y_file_path,test_y)
 
