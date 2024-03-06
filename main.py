@@ -26,7 +26,7 @@ def get_save_path(args, HEAD):
 
 
 
-@profile
+#@profile
 def main(params: dict, config_path=None):
 
     run = neptune.init_run(
@@ -116,9 +116,9 @@ def main(params: dict, config_path=None):
 
 if __name__ == "__main__":
 
-    clauses = [1000,5000,10000] # 10000
-    Ts = [10,20,30,40] # 20,30,40
-    ss = [5,10,25] #  10, 25
+    clauses = [1000] # 5000,10000
+    Ts = [40] # 20,30,40
+    ss = [5] #  10, 25
     epochs=10 
     id=0
     for c in clauses:
