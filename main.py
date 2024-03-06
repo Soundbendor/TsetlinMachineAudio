@@ -132,7 +132,7 @@ if __name__ == "__main__":
                         "epochs":epochs,
                         "id" : id
                         }
-                main(params,config="config_main.json")
+                main(params,config_path="config_main.json")
 
   
 
