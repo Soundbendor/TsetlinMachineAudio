@@ -24,16 +24,14 @@ def get_save_path(args, HEAD):
     result_path = os.path.join(HEAD, suffix)
     return result_path
 
-
+# TODO consider wrapping neptune in debug == False ctrl-F all neptune calls
 
 #@profile
 def main(params: dict, config_path=None):
 
     run = neptune.init_run(
-        project="mccabepe/TMAudio",
+        project="mccabepe/TsetlinVocal",
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
-        custom_run_id=f"Tuning_run_{params['id']}",
-        mode="async"
     ) 
 
     if config_path is not None:
@@ -61,6 +59,7 @@ def main(params: dict, config_path=None):
     s = params["s"]
     T = params["T"]
     state_bits = params["state_bits"]
+    weights = params["weights"]
     #integer_weighted = params["weights"]
     #drop_clause = params["drop"]
     # Many more optional parameters
@@ -73,6 +72,7 @@ def main(params: dict, config_path=None):
                                             number_of_state_bits_ta=state_bits,
                                             incremental=True,
                                             platform='GPU',
+                                            weighted_clauses=weights,
                                             seed=1066)
   
     epochs = params["epochs"]
@@ -119,20 +119,23 @@ if __name__ == "__main__":
     clauses = [1000] # 5000,10000
     Ts = [40] # 20,30,40
     ss = [5] #  10, 25
+    weights = [True, False]
     epochs=10 
     id=0
     for c in clauses:
         for T in Ts:
             for s in ss:
-                id += 1
-                params = {"clauses": c,
-                        "T": T,
-                        "s":s,
-                        "state_bits" : 16,
-                        "epochs":epochs,
-                        "id" : id
-                        }
-                main(params,config_path="config_main.json")
+                for w in weights:
+                    id += 1
+                    params = {"clauses": c,
+                            "T": T,
+                            "s":s,
+                            "state_bits" : 16,
+                            "weights": w
+                            "epochs":epochs,
+                            "id" : id
+                            }
+                    main(params,config_path="config_main.json")
 
   
 
