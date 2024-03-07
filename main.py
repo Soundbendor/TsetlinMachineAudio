@@ -131,7 +131,7 @@ if __name__ == "__main__":
                             "T": T,
                             "s":s,
                             "state_bits" : 16,
-                            "weights": w
+                            "weights": w,
                             "epochs":epochs,
                             "id" : id
                             }
