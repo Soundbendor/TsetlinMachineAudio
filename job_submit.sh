@@ -3,7 +3,7 @@
 #SBATCH --job-name=TMAudio
 #SBATCH --partition="dgxh,dgx2,dgxs"
 #SBATCH --gres:gpu:1
-#SBATCH --mem-per-gpu=10G
+#SBATCH -A soundbendor
 #SBATCH --constraint=el9
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
