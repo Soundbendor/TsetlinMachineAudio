@@ -85,14 +85,16 @@ def main(params: dict, config_path=None):
   
     epochs = params["epochs"]
     #epochs = 10
+    batch_size = 1000
     #train loop
     train_accuracy_list = []
     val_accuracy_list = []
     for e in tqdm(range(epochs)):
-        model.fit(train_x,train_y,epochs=1)
+        #model.fit(train_x,train_y,epochs=1)
+        batched_train(model,train_x,train_y, batch_size)
         train_preds = model.predict(train_x)
         val_preds = model.predict(val_x)
-        #print(f"predictions of shape: {train_preds.shape}, first element: {train_preds[0]}")
+       
         
         train_acc = np.mean(train_preds == train_y)
         train_accuracy_list.append(train_acc)
@@ -102,12 +104,7 @@ def main(params: dict, config_path=None):
 
     run["train/acc"].append(train_acc)
     run["test/acc"].append(val_acc)
-    #plt.plot(np.arange(epochs),train_accuracy_list,label="Train")
-    #plt.plot(np.arange(epochs),val_accuracy_list,label="val")
-    #plt.title("Train and Val Accuracy")
-    #plt.xlabel("Epochs")
-    #plt.ylabel("Accuracy")
-    #plt.savefig("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/vowel_fold_1_tune.png")
+
 
     conf_m = np.round(confusion_matrix(val_y,val_preds)/val_y.shape[0], decimals=2)
     print(conf_m)
