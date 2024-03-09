@@ -283,6 +283,8 @@ def main():
         X = np.vstack(X)
     Y = np.vstack(Y)
 
+    np.random.shuffle(X)
+    np.random.shuffle(Y)
 
     np.save(x_file_path,X)
     np.save(y_file_path,Y)
@@ -300,7 +302,8 @@ def main():
         test_X = np.vstack(test_X)
     test_y = np.vstack(test_Y)
 
- 
+    np.random.shuffle(test_X)
+    np.random.shuffle(test_y)
  
     np.save(test_x_file_path,test_X)
     np.save(test_y_file_path,test_y)

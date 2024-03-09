@@ -26,6 +26,14 @@ def get_save_path(args, HEAD):
 
 # TODO consider wrapping neptune in debug == False ctrl-F all neptune calls
 
+
+def batched_train(model, X,y, batch_size, epochs=1):
+    array_size = len(X)
+    for i in range(0, array_size, batch_size):
+        model.fit(X[i:i+batch_size],y[i:i+batch_size],epochs=epochs)
+    
+
+
 #@profile
 def main(params: dict, config_path=None):
 
@@ -47,12 +55,12 @@ def main(params: dict, config_path=None):
         }
     # Data stuff
     
-    train_x = np.load(config["train_x"])
-    train_y = np.load(config["train_y"]).reshape((-1,))
+    train_x = np.load(config["train_x"],mmap_mode='r')
+    train_y = np.load(config["train_y"],mmap_mode='r').reshape((-1,))
     assert len(train_y.shape) == 1
 
-    val_x = np.load(config["test_x"])
-    val_y = np.load(config["test_y"]).reshape(-1,)
+    val_x = np.load(config["test_x"],mmap_mode='r')
+    val_y = np.load(config["test_y"],mmap_mode='r').reshape(-1,)
  
   
     number_clauses = params["clauses"]
