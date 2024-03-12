@@ -313,12 +313,4 @@ def main():
 
 
 if __name__ == "__main__":
-    choice = input("Are you sure you want to do this? It generates files. [Y/n]")
-    if choice not in ["Y","n"]:
-        print("Invalid option. Exiting Now.")
-        exit() # sys.exit?
-    elif choice == "n":
-        print("Exiting.")
-        exit()    
-    elif choice == "Y":
-        main()
+    main()
