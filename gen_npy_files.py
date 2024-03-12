@@ -3,7 +3,7 @@ from tqdm import tqdm
 from librosa.feature import mfcc as MFCC
 from sklearn.preprocessing import KBinsDiscretizer
 from pydub import AudioSegment
-import memory_profiler
+
 import re
 import os
 import json
