@@ -11,11 +11,11 @@ import pickle
 import datetime
 
 
-import neptune
+#import neptune
 
 
 logging.getLogger('matplotlib').setLevel(logging.WARNING)
-logging.getLogger("neptune").setLevel(logging.CRITICAL)
+#logging.getLogger("neptune").setLevel(logging.CRITICAL)
 def get_save_path(args, HEAD):
     """Make save path
     """
@@ -37,10 +37,10 @@ def batched_train(model, X,y, batch_size, epochs=1):
 #@profile
 def main(params: dict, config_path=None):
 
-    run = neptune.init_run(
-        project="mccabepe/TsetlinVocal",
-        api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
-    ) 
+#    run = neptune.init_run(
+#        project="mccabepe/TsetlinVocal",
+#        api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
+#    ) 
 
     if config_path is not None:
         with open(config_path, 'r') as f:
@@ -72,7 +72,7 @@ def main(params: dict, config_path=None):
     #drop_clause = params["drop"]
     # Many more optional parameters
  
-    run["parameters"] = params
+ #   run["parameters"] = params
 
     model = vanilla_classifier.TMClassifier(number_clauses, 
                                             T=T,
@@ -102,22 +102,22 @@ def main(params: dict, config_path=None):
         val_accuracy_list.append(val_acc)
 
 
-    run["train/acc"].append(train_acc)
-    run["test/acc"].append(val_acc)
+   # run["train/acc"].append(train_acc)
+   # run["test/acc"].append(val_acc)
 
 
     conf_m = np.round(confusion_matrix(val_y,val_preds)/val_y.shape[0], decimals=2)
     print(conf_m)
     
     # Bookkeeping stuff here:
-    #pickle_path = config["pickle_path"]
-   # pickle_file = get_save_path(["pickled_data"],pickle_path)
+    pickle_path = config["pickle_path"]
+    pickle_file = get_save_path(["pickled_data"],pickle_path)
 
-    #to_pickle = [model, train_accuracy_list, val_accuracy_list]
-    #with open(pickle_file,"wb") as f:
-    #    pickle.dump(to_pickle,f)
+    to_pickle = [model, train_accuracy_list, val_accuracy_list]
+    with open(pickle_file,"wb") as f:
+        pickle.dump(to_pickle,f)
  
-    run.stop()
+    #run.stop()
 
 if __name__ == "__main__":
 
