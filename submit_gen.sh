@@ -2,7 +2,7 @@
 #
 #SBATCH --job-name=Gen_numpy
 #SBATCH --partition=soundbendor
-#SBATCH -A soundbendor
+#SBATCH --account=soundbendor
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
 
