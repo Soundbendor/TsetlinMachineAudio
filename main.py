@@ -12,7 +12,7 @@ import datetime
 
 
 #import neptune
-
+#
 
 logging.getLogger('matplotlib').setLevel(logging.WARNING)
 #logging.getLogger("neptune").setLevel(logging.CRITICAL)
@@ -47,10 +47,10 @@ def main(params: dict, config_path=None):
             config = json.load(f)
     else:
         config={ 
-                    "train_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_1_2024-02-26-16-38.npy",
-                    "test_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_1_2024-02-26-16-49.npy",
-                    "train_y" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_1_2024-02-26-16-38.npy",
-                    "test_y": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_1_2024-02-26-16-49.npy",
+                    "train_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_1_2024-03-12-16-45.npy",
+                    "test_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_1_2024-03-12-16-47.npy",
+                    "train_y" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_1_2024-03-12-16-45.npy",
+                    "test_y": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_1_2024-03-12-16-47.npy",
                     "pickle_path": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/Vowels/"          
         }
     # Data stuff
