@@ -11,4 +11,5 @@ module load slurm
 module load cuda/12.2
 module load gcc/11.4
 source env/bin/activate
-python3 main.py
+python3 tmu_test.py
+
