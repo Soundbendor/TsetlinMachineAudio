@@ -116,10 +116,10 @@ def main(params: dict, config_path=None):
 
 if __name__ == "__main__":
 
-    clauses = [1000,5000,10000] # 5000,10000
-    Ts = [40,80,100] # 20,30,40
-    ss = [5,10,25] #  10, 25
-    weights = [True, False]
+    clauses = [2500] # 5000,10000
+    Ts = [200] # 20,30,40
+    ss = [17] #  10, 25
+    weights = [True]
     epochs=10 
     id=0
     for c in clauses:
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                     params = {"clauses": c,
                             "T": T,
                             "s":s,
-                            "state_bits" : 16,
+                            "state_bits" : 64,
                             "weights": w,
                             "epochs":epochs,
                             "id" : id
