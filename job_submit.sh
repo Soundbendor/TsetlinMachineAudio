@@ -3,7 +3,7 @@
 #SBATCH --job-name=TMAudio_test
 #SBATCH --partition=soundbendor
 #SBATCH --account=soundbendor
-#SBATCH --cpus-per-task = 4
+#SBATCH --cpus-per-task=4
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
 
