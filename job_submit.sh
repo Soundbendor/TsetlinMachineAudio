@@ -9,7 +9,7 @@
 
 module load slurm
 module load cuda/12.2
-module load gcc/11.4
+module load gcc/12.2
 module load python/3.10
 module load openssl/1.1.1w
 source env/bin/activate
