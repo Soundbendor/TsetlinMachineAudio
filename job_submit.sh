@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #SBATCH --job-name=TMAudio_test
-#SBATCH --partition=dgxs,dgx2
+#SBATCH --partition=dgxs,dgx2,dgxh
 #SBATCH --gres=gpu:1
 #SBATCH --constraint=el9
 #SBATCH -o sbatch_logs/main.out
