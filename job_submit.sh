@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#SBATCH --job-name=TMAudio_test
+#SBATCH --job-name=TMAudio
 #SBATCH --partition=soundbendor
 #SBATCH --account=soundbendor
 #SBATCH --cpus-per-task=4
