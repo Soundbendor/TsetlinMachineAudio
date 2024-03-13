@@ -13,7 +13,7 @@ module load gcc/12.2
 module load python/3.10
 module load openssl/1.1.1w
 source env/bin/activate
-python3 tmu_test.py
+python3 main.py
 
 
 ### OLD
