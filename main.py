@@ -108,7 +108,7 @@ def main(params: dict, config_path=None):
     pickle_path = config["pickle_path"]
     pickle_file = get_save_path(["pickled_data"],pickle_path)
 
-    to_pickle = [train_accuracy_list, val_accuracy_list] # TODO add model
+    to_pickle = [train_accuracy_list, val_accuracy_list,params] # TODO add model
     with open(pickle_file,"wb") as f:
         pickle.dump(to_pickle,f)
  
