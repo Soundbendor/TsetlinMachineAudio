@@ -1,8 +1,7 @@
 #!/bin/bash
 #
 #SBATCH --job-name=Gen_numpy
-#SBATCH --partition=soundbendor
-#SBATCH --account=soundbendor
+#SBATCH --mem=10G
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
 
