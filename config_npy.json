@@ -11,11 +11,11 @@
     "hop_length" : 100,
     "n_mels" : 80,
     "center" : false,
-    "class_type" : "vowel",
+    "class_type" : "singer",
     "avg_mfccs": false,
     "delay_bools": true,
     "train_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/data_by_singer/",
     "test_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/test/",
-    "data_out_path" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/",
+    "data_out_path" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/",
     "fold" : "fold_3"
 }
