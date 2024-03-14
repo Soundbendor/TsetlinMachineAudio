@@ -51,12 +51,12 @@ def main(params: dict, config_path=None):
         }
     # Data stuff
     
-    train_x = np.load(config["train_x"],mmap_mode='r')
-    train_y = np.load(config["train_y"],mmap_mode='r').reshape((-1,))
+    train_x = np.load(config["train_x"])
+    train_y = np.load(config["train_y"]).reshape((-1,))
     assert len(train_y.shape) == 1
 
-    val_x = np.load(config["test_x"],mmap_mode='r')
-    val_y = np.load(config["test_y"],mmap_mode='r').reshape(-1,)
+    val_x = np.load(config["test_x"])
+    val_y = np.load(config["test_y"]).reshape(-1,)
  
   
     number_clauses = params["clauses"]
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     clauses = [2500] # 5000,10000
     Ts = [200] # 20,30,40
     ss = [17] #  10, 25
-    weights = [True]
+    weights = [False]
     epochs=10 
     id=0
     for c in clauses:
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                     params = {"clauses": c,
                             "T": T,
                             "s":s,
-                            "state_bits" : 64,
+                            "state_bits" : 100,
                             "weights": w,
                             "epochs":epochs,
                             "id" : id
