@@ -51,12 +51,12 @@ def main(params: dict, config_path=None):
         }
     # Data stuff
     
-    train_x = np.load(config["train_x"])
-    train_y = np.load(config["train_y"]).reshape((-1,))
+    train_x = np.load(config["train_x"],mmap_mode='r')
+    train_y = np.load(config["train_y"],mmap_mode='r').reshape((-1,))
     assert len(train_y.shape) == 1
 
-    val_x = np.load(config["test_x"])
-    val_y = np.load(config["test_y"]).reshape(-1,)
+    val_x = np.load(config["test_x"],mmap_mode='r')
+    val_y = np.load(config["test_y"],mmap_mode='r').reshape(-1,)
  
   
     number_clauses = params["clauses"]
@@ -86,8 +86,8 @@ def main(params: dict, config_path=None):
     train_accuracy_list = []
     val_accuracy_list = []
     for e in tqdm(range(epochs)):
-        model.fit(train_x,train_y,epochs=1)
-        #batched_train(model,train_x,train_y, batch_size)
+        #model.fit(train_x,train_y,epochs=1)
+        batched_train(model,train_x,train_y, batch_size)
         train_preds = model.predict(train_x)
         val_preds = model.predict(val_x)
        
