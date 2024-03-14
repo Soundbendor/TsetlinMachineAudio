@@ -90,8 +90,8 @@ def main(params: dict, config_path=None):
     train_accuracy_list = []
     val_accuracy_list = []
     for e in tqdm(range(epochs)):
-        #model.fit(train_x,train_y,epochs=1)
-        batched_train(model,train_x,train_y, batch_size)
+        model.fit(train_x,train_y,epochs=1)
+        #batched_train(model,train_x,train_y, batch_size)
         train_preds = model.predict(train_x)
         val_preds = model.predict(val_x)
        
