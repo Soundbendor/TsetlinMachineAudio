@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #SBATCH --job-name=Gen_numpy
-#SBATCH --mem=10G
+#SBATCH --mem=15G
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
 
