@@ -12,8 +12,7 @@
 module load slurm
 module load cuda/12.2
 module load gcc/12.2
-module load python/3.10
-module load openssl/1.1.1w
+module load python/3.10 
 source env/bin/activate
 module list
 which gcc
