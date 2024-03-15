@@ -5,8 +5,10 @@
 #SBATCH --account=soundbendor
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=15G
+#SBATCH --time=2-00:00:00
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
+
 
 module load slurm
 module load cuda/12.2
