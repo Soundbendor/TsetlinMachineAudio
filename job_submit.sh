@@ -8,6 +8,7 @@
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
 
+
 module load slurm
 module load cuda/12.2
 module load gcc/12.2
