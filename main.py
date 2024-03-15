@@ -112,10 +112,10 @@ def main(params: dict, config_path=None):
 
 if __name__ == "__main__":
 
-    clauses = [2500]  # 5000,10000
-    Ts = [200]  # 20,30,40
-    ss = [17]  # 10, 25
-    weights = [False]
+    clauses = [2500,5000,10000]  # 5000,10000
+    Ts = [40, 120, 200]  # 20,30,40
+    ss = [5, 15, 25]  # 10, 25
+    weights = [True, False]
     epochs = 10
     id = 0
     for c in clauses:

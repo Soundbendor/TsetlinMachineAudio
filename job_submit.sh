@@ -4,7 +4,7 @@
 #SBATCH --partition=soundbendor
 #SBATCH --account=soundbendor
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=10G
+#SBATCH --mem=15G
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
 
