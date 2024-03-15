@@ -2,7 +2,7 @@ import numpy as np
 from tmu.data import MNIST
 from tmu.models.classification.vanilla_classifier import TMClassifier
 from tqdm import tqdm
-
+import pycuda
 
 
 if __name__ == "__main__":
