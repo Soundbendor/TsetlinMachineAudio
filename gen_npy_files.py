@@ -299,14 +299,15 @@ def main():
     test_x_file_path = get_save_path([config["class_type"],"X_test",config["fold"]],config["data_out_path"])
     test_y_file_path = get_save_path([config["class_type"],"y_test",config["fold"]],config["data_out_path"])
     
-    if type(test_X) == list:
-        test_X = np.vstack(test_X)
-    test_y = np.vstack(test_Y)
+    if test_X is not None:
+        if type(test_X) == list:
+            test_X = np.vstack(test_X)
+        test_y = np.vstack(test_Y)
 
-    test_X, test_y = shuffle(test_X, test_y)
- 
-    np.save(test_x_file_path,test_X)
-    np.save(test_y_file_path,test_y)
+        test_X, test_y = shuffle(test_X, test_y)
+    
+        np.save(test_x_file_path,test_X)
+        np.save(test_y_file_path,test_y)
 
     log_name = os.path.join(config["data_out_path"],"log{}".format( datetime.datetime.now().strftime('%Y-%m-%d-%H-%M') ))
     shutil.copyfile("config_npy.json",log_name)
