@@ -1,5 +1,5 @@
 import numpy as np
-from tqdm import tqdm
+
 from librosa.feature import mfcc as MFCC
 from sklearn.preprocessing import KBinsDiscretizer
 from pydub import AudioSegment
@@ -229,7 +229,7 @@ def process_directory(directory, booleanizer, config, train=True,verbose=False):
     x_out = []
     y_out = []
     file_count = 0
-    for root, dirs, files in tqdm(os.walk(directory),desc="Directory Tree"):
+    for root, dirs, files in os.walk(directory):
         for file in files:
             if file.endswith(".wav"):
                 file_count += 1
