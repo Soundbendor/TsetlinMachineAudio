@@ -7,7 +7,7 @@ import json
 import logging
 import pickle
 import datetime
-
+import argparse
 
 # import neptune
 #
@@ -33,23 +33,20 @@ def batched_train(model, X, y, batch_size, epochs=1):
 
 
 # @profile
-def main(params: dict, config_path=None):
-    # run = neptune.init_run(
-    #    project="mccabepe/TsetlinVocal",
-    #    api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJhM2FhZjQ3Yy02NmMxLTRjNzMtYjMzZC05YjM2N2FjOTgyMTEifQ==",
-    # )
+def main(args):
+    number_clauses=int(args.clauses)
+    epochs = int(args.epochs)
+    s=int(args.s)
+    T=int(args.T)
+    weights = bool(args.weights)
+    config_path = args.config
 
     if config_path is not None:
         with open(config_path, 'r') as f:
             config = json.load(f)
     else:
-        config = {
-            "train_x": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_4_2024-03-14-16-39.npy",
-            "test_x": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_4_2024-03-14-16-42.npy",
-            "train_y": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_4_2024-03-14-16-39.npy",
-            "test_y": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_4_2024-03-14-16-42.npy",
-            "pickle_path": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/Vowels/"
-        }
+        raise ValueError("No config path")
+
     # Data stuff
 
     train_x = np.load(config["train_x"], mmap_mode='r')
@@ -59,28 +56,19 @@ def main(params: dict, config_path=None):
     val_x = np.load(config["test_x"], mmap_mode='r')
     val_y = np.load(config["test_y"], mmap_mode='r').reshape(-1, )
 
-    number_clauses = params["clauses"]
-    s = params["s"]
-    T = params["T"]
-    state_bits = params["state_bits"]
-    weights = params["weights"]
-    # integer_weighted = params["weights"]
-    # drop_clause = params["drop"]
-    # Many more optional parameters
-
-    # run["parameters"] = params
+    
 
     model = vanilla_classifier.TMClassifier(number_clauses,
                                             T=T,
                                             s=s,
-                                            number_of_state_bits_ta=state_bits,
+                                            number_of_state_bits_ta=100,
                                             incremental=True,
                                             platform='GPU',
                                             weighted_clauses=weights,
                                             seed=1066)
 
-    epochs = params["epochs"]
-    # epochs = 10
+    
+
     batch_size = 1000
     # train loop
     train_accuracy_list = []
@@ -96,14 +84,13 @@ def main(params: dict, config_path=None):
         val_acc = np.mean(val_preds == val_y)
         val_accuracy_list.append(val_acc)
 
-    # run["train/acc"].append(train_acc)
-    # run["test/acc"].append(val_acc)
+
 
     # Bookkeeping stuff here:
     pickle_path = config["pickle_path"]
-    pickle_file = get_save_path(["pickled_data"], pickle_path)
+    pickle_file = get_save_path([config["description"]], pickle_path)
 
-    to_pickle = [train_accuracy_list, val_accuracy_list, params]  # TODO add model
+    to_pickle = [train_accuracy_list, val_accuracy_list, model]  
     with open(pickle_file, "wb") as f:
         pickle.dump(to_pickle, f)
 
@@ -111,24 +98,12 @@ def main(params: dict, config_path=None):
 
 
 if __name__ == "__main__":
-
-    clauses = [2500,5000,10000]  # 5000,10000
-    Ts = [40, 120, 200]  # 20,30,40
-    ss = [5, 15, 25]  # 10, 25
-    weights = [True, False]
-    epochs = 10
-    id = 0
-    for c in clauses:
-        for T in Ts:
-            for s in ss:
-                for w in weights:
-                    id += 1
-                    params = {"clauses": c,
-                              "T": T,
-                              "s": s,
-                              "state_bits": 100,
-                              "weights": w,
-                              "epochs": epochs,
-                              "id": id
-                              }
-                    main(params)
+    parser = argparse.ArgumentParser(description="Train the TM model")
+    parser.add_argument("clauses", help="Number of clauses")
+    parser.add_argument("s", help="sensitivity")
+    parser.add_argument("T", help="threshold")
+    parser.add_argument("weights",help="integer weights")
+    parser.add_argument("epochs", help="Number of training epochs")
+    parser.add_argument("config", help="config file")
+    args = parser.parse_args()
+    main(args)
