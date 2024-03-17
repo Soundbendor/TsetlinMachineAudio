@@ -94,7 +94,6 @@ def main(args):
     with open(pickle_file, "wb") as f:
         pickle.dump(to_pickle, f)
 
-    # run.stop()
 
 
 if __name__ == "__main__":
