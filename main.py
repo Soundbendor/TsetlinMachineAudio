@@ -73,6 +73,7 @@ def main(args):
     # train loop
     train_accuracy_list = []
     val_accuracy_list = []
+    test_preds_list = []
     for e in tqdm(range(epochs)):
         # model.fit(train_x,train_y,epochs=1)
         batched_train(model, train_x, train_y, batch_size)
@@ -83,14 +84,14 @@ def main(args):
         train_accuracy_list.append(train_acc)
         val_acc = np.mean(val_preds == val_y)
         val_accuracy_list.append(val_acc)
-
+        test_preds_list.append(val_preds)
 
 
     # Bookkeeping stuff here:
     pickle_path = config["pickle_path"]
     pickle_file = get_save_path([config["description"]], pickle_path)
 
-    to_pickle = [train_accuracy_list, val_accuracy_list, model]  
+    to_pickle = [train_accuracy_list, val_accuracy_list, test_preds_list]  
     with open(pickle_file, "wb") as f:
         pickle.dump(to_pickle, f)
 
