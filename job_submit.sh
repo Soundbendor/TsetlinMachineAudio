@@ -3,7 +3,7 @@
 #SBATCH --job-name=TMAudio
 #SBATCH --partition=soundbendor
 #SBATCH --account=soundbendor
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=4
 #SBATCH --mem=10G
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
