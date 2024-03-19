@@ -8,7 +8,7 @@
 #SBATCH -e sbatch_logs/main.err
 
 
-source activate env/bin/activate
+source env/bin/activate
 module load cuda/12.2
 python tmu_test.py
 
