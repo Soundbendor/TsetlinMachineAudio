@@ -1,11 +1,11 @@
 {
     
-    "train_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_2_2024-03-14-18-35.npy",
-    "test_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_2_2024-03-14-18-40.npy",
-    "train_y" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_2_2024-03-14-18-35.npy",
-    "test_y": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_2_2024-03-14-18-40.npy",
+    "train_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_4_2024-03-14-16-39.npy",
+    "test_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_4_2024-03-14-16-42.npy",
+    "train_y" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_4_2024-03-14-16-39.npy",
+    "test_y": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_4_2024-03-14-16-42.npy",
     "pickle_path": "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/Vowels/",
-    "description" : "vowel_fold_2"
+    "description" : "vowel_fold_4"
 
 }
 
