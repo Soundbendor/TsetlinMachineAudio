@@ -2,9 +2,8 @@
 #
 #SBATCH --job-name=TMU-TEST
 #SBATCH --partition=dgxs,dgxh,dgx2
-#SBATCH --time=2-00:00:00
 #SBATCH --gres=gpu:1
-#SBATCH -o sbatch_logs/main.out
+#SBATCH -o sbatch_logs/main.out 
 #SBATCH -e sbatch_logs/main.err
 
 
