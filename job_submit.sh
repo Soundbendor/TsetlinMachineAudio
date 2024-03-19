@@ -3,6 +3,7 @@
 #SBATCH --job-name=TMU-TEST
 #SBATCH --partition=dgxs,dgxh,dgx2
 #SBATCH --gres=gpu:1
+#SBATCH --constraint=el9
 #SBATCH -o sbatch_logs/main.out 
 #SBATCH -e sbatch_logs/main.err
 
