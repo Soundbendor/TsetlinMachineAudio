@@ -3,10 +3,12 @@
 #SBATCH --job-name=TMAudio
 #SBATCH --partition=soundbendor
 #SBATCH --account=soundbendor
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=2
 #SBATCH --mem=10G
+#SBATCH --time=2-00:00:00
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
+
 
 module load slurm
 module load cuda/12.2

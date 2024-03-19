@@ -35,10 +35,10 @@ def batched_train(model, X, y, batch_size, epochs=1):
 # @profile
 def main(args):
     number_clauses=int(args.clauses)
-    epochs = int(args.epochs)
     s=int(args.s)
     T=int(args.T)
     weights = bool(args.weights)
+    epochs = int(args.epochs)
     config_path = args.config
 
     if config_path is not None:
@@ -74,9 +74,9 @@ def main(args):
     train_accuracy_list = []
     val_accuracy_list = []
     test_preds_list = []
-    for e in tqdm(range(epochs)):
+    for e in range(epochs):
         # model.fit(train_x,train_y,epochs=1)
-        batched_train(model, train_x, train_y, batch_size)
+        batched_train(model, train_x, train_y, batch_size) # internal epoch set to 1
         train_preds = model.predict(train_x)
         val_preds = model.predict(val_x)
 
