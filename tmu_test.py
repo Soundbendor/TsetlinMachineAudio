@@ -1,11 +1,13 @@
 import numpy as np
 from tmu.data import MNIST
 from tmu.models.classification.vanilla_classifier import TMClassifier
-import pycuda
+import pycuda.driver as cuda
 import time
 
 if __name__ == "__main__":
-    
+    cuda.init()
+    for i in range(cuda.Device.count()):
+        print(cuda.Device(i).name())
     data = MNIST().get()
     tm = TMClassifier(2500,40,5,incremental=True,platform="GPU")
     batch_size = 300
