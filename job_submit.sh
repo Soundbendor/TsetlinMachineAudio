@@ -4,7 +4,6 @@
 #SBATCH --partition=dgxs,dgxh,dgx2
 #SBATCH --gres=gpu:2
 #SBATCH --constraint=el9
-#SBATCH --mem=10G
 #SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
 
