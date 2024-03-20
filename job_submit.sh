@@ -2,13 +2,13 @@
 #
 #SBATCH --job-name=TMU-TEST
 #SBATCH --partition=dgxs,dgxh,dgx2
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:2
 #SBATCH --constraint=el9
 #SBATCH -o sbatch_logs/main.out 
 #SBATCH -e sbatch_logs/main.err
 
 
-source activate env/bin/activate
+source env/bin/activate
 module load cuda/12.2
 python tmu_test.py
 
