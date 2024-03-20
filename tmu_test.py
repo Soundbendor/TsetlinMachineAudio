@@ -12,7 +12,7 @@ if __name__ == "__main__":
     tm = TMClassifier(2500,40,5,incremental=True,platform="GPU")
     batch_size = 300
     inc_avg = 0
-    for e in range(100):
+    for e in range(10):
         start = time.time()
         for i in range(int(60000/300)):
             x_batch = data["x_train"][i*batch_size:(i+1)*batch_size]

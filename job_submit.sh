@@ -9,7 +9,7 @@
 
 
 
-source env/bin/activate
+source test_env/bin/activate
 module load cuda/12.2
 python tmu_test.py
 
