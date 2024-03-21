@@ -1,34 +1,64 @@
 import numpy as np
-from sklearn.model_selection import GridSearchCV
-from tmu.models.classification import vanilla_classifier
+from tmu.models.classification.vanilla_classifier import TMClassifier
+from sklearn.model_selection import ParameterGrid
+from sklearn.metrics import f1_score
+import json
+
+def batched_train(model, X, y, batch_size, epochs=1):
+    array_size = len(X)
+    for i in range(0, array_size, batch_size):
+        model.fit(X[i:i + batch_size], y[i:i + batch_size], epochs=epochs)
 
 
+def set_model_params(model_class, incremental=True, platform="GPU", seed=1066, **kwargs):
+    params = {'incremental': incremental, 'platform': platform, 'seed': seed, **kwargs}
+    return model_class(**params)
 
-class TM: # TODO add more hyperparameters
-    def __init__(self, clauses=1000,T=10,s=5,state_bits=100):
-        self.model = vanilla_classifier.TMClassifier(clauses,T,s,number_of_state_bits_ta=state_bits)
-    
-    def fit(self, X, y):
-        self.model.fit(X,y,epochs = 5)
-        return self
-    
-    def predict(self, X):
-        return self.model.predict(X)
-    
+
+def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_grid, training_epochs=2, max_epochs=8, search_width=3, tol=1e-4, batch_size=256):
+    best_params = None
+    best_score = 0
+    no_improvement_count = 0
+
+    for params in ParameterGrid(param_grid):
+        model = set_model_params(model_class, params)
+        batched_train(model, X_train, y_train, batch_size, training_epochs)
+        for j in range(max_epochs):
+            batched_train(model, X_train, y_train, batch_size, epochs=1)
+            y_pred = model.predict(X_val)
+            score = f1_score(y_val, y_pred)
+
+            if score > best_score + tol:
+                best_score = score
+                best_params = params
+                no_improvement_count = 0
+            else:
+                no_improvement_count += 1
+
+            if no_improvement_count >= search_width:
+                break
+
+    return best_params
+
+
 
 
 if __name__ == "__main__":
+    # use these names
     param_grid = {
-        "clauses" : [1000,5000,10000], 
-        "T" : [10,20,30,40],
-        "s" : [5,25]
+        "number_of_clauses" : [1000, 2500, 5000],
+        "T" : [40, 120, 200],
+        "s" : [5, 10, 15]
     }
+    with open("config_main.json") as f:
+        config = json.load(f)
 
-    train_X = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_1_2024-02-26-16-38.npy")
-    train_y = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_1_2024-02-26-16-38.npy").reshape(-1,)
-    model = TM()
-   # g = GridSearchCV(model,param_grid,n_jobs=-1,cv=2,scoring="f1_weighted")
-   # g.fit(train_X,train_y)
-    #print(g.best_params_)
+    train_X = config["train_x"]
+    train_y = config["train_y"].reshape(-1,)
+    test_x = config["test_x"]
+    test_y = config["test_y"].reshape(-1, )
+    model_class = TMClassifier
+    best_params = hyperparameter_tuning(model_class,train_X,train_y,test_x,test_y,param_grid)
+    print(best_params)
 
 
