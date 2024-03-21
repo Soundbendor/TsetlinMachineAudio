@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 from tmu.models.classification import vanilla_classifier
 from tmu.data import MNIST
 from main import batched_train
@@ -22,7 +22,7 @@ def main(args):
     data = MNIST().get()
     X = data["x_train"]
     y = data["y_train"]
-    kf = KFold(n_splits=5, shuffle=True, random_state=1066)
+    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
 
     model = vanilla_classifier.TMClassifier(number_clauses,
                                             T=T,
@@ -36,7 +36,7 @@ def main(args):
     train_final = []
     val_final = []
     test_preds_list = []
-    for train_index, test_index in kf.split(X):
+    for train_index, test_index in kf.split(X, y):
         train_x, val_x = X[train_index], X[test_index]
         train_y, val_y = y[train_index], y[test_index]
         train_accuracy_list = []
