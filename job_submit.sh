@@ -2,7 +2,7 @@
 #
 #SBATCH --job-name=TMAudio
 #SBATCH --partition=dgxs,dgxh,dgx2,soundbendor
-#SBATCH --soundbendor
+#SBATCH -A soundbendor
 #SBATCH --mem=10G
 #SBATCH -o main.out
 #SBATCH -e main.err
