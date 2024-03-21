@@ -54,13 +54,16 @@ if __name__ == "__main__":
     with open("config_main.json") as f:
         config = json.load(f)
 
-    train_X = config["train_x"]
-    train_y = config["train_y"].reshape(-1,)
-    test_x = config["test_x"]
-    test_y = config["test_y"].reshape(-1, )
+    train_x = np.load(config["train_x"], mmap_mode='r')
+    train_y = np.load(config["train_y"], mmap_mode='r').reshape((-1,))
+    assert len(train_y.shape) == 1
+
+    val_x = np.load(config["test_x"], mmap_mode='r')
+    val_y = np.load(config["test_y"], mmap_mode='r').reshape(-1, )
+    assert len(val_y.shape) == 1
 
     model_class = TMClassifier
-    best_params = hyperparameter_tuning(model_class,train_X,train_y,test_x,test_y,param_grid)
+    best_params = hyperparameter_tuning(model_class,train_x,train_y,val_x,val_y,param_grid)
     print(best_params)
 
 
