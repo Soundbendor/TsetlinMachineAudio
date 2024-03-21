@@ -63,7 +63,7 @@ if __name__ == "__main__":
     #train_y = config["train_y"].reshape(-1,)
     #test_x = config["test_x"]
     #test_y = config["test_y"].reshape(-1, )
-    data = MNIST.get()
+    data = MNIST().get()
     model_class = TMClassifier
     best_params = hyperparameter_tuning(model_class,data["x_train"],data['y_train'],data["x_test"],data["y_test"],param_grid)
     print(best_params)
