@@ -1,7 +1,6 @@
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from tmu.models.classification import vanilla_classifier
-from tmu.data import MNIST
 from main import batched_train
 from main import get_save_path
 import os
@@ -16,12 +15,9 @@ def main(args):
     T = int(args.T)
     weights = bool(args.weights)
     epochs = int(args.epochs)
-    # X = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_X_ALL_2024-03-16-17-48.npy", mmap_mode="r")
-    # y = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_y_ALL_2024-03-16-17-48.npy",mmap_mde="r")
+    X = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_X_ALL_2024-03-16-17-48.npy", mmap_mode="r")
+    y = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_y_ALL_2024-03-16-17-48.npy",mmap_mde="r")
 
-    data = MNIST().get()
-    X = data["x_train"]
-    y = data["y_train"]
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
 
     model = vanilla_classifier.TMClassifier(number_clauses,
@@ -61,8 +57,8 @@ def main(args):
     }
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/singer"
     pickle_file = get_save_path(["all_folds"], pickle_path)
-    #with open(pickle_file, "wb") as f:
-    #    pickle.dump(data_dict, f)
+    with open(pickle_file, "wb") as f:
+        pickle.dump(data_dict, f)
 
 
 if __name__ == "__main__":
