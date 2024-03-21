@@ -22,7 +22,7 @@ def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_gri
     no_improvement_count = 0
 
     for params in ParameterGrid(param_grid):
-        model = set_model_params(model_class, params)
+        model = set_model_params(model_class, **params)
         batched_train(model, X_train, y_train, batch_size, training_epochs)
         for j in range(max_epochs):
             batched_train(model, X_train, y_train, batch_size, epochs=1)
