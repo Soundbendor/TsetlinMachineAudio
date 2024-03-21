@@ -61,8 +61,8 @@ def main(args):
     }
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/singer"
     pickle_file = get_save_path(["all_folds"], pickle_path)
-    with open(pickle_file, "wb") as f:
-        pickle.dump(data_dict, f)
+    #with open(pickle_file, "wb") as f:
+    #    pickle.dump(data_dict, f)
 
 
 if __name__ == "__main__":
