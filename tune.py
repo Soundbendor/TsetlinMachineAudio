@@ -27,7 +27,7 @@ def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_gri
         for j in range(max_epochs):
             batched_train(model, X_train, y_train, batch_size, epochs=1)
             y_pred = model.predict(X_val)
-            score = f1_score(y_val, y_pred)
+            score = f1_score(y_val, y_pred,average='micro')
 
             if score > best_score + tol:
                 best_score = score
