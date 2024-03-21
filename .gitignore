@@ -1,2 +1,4 @@
 sbatch_logs/
 env/
+main.err
+main.out

@@ -31,3 +31,4 @@ m4
 m8
 f5
 
+### hyperparameters for vowel: 2500 5 200 False 100 config_main.json

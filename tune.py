@@ -2,6 +2,7 @@ import numpy as np
 from tmu.models.classification.vanilla_classifier import TMClassifier
 from sklearn.model_selection import ParameterGrid
 from sklearn.metrics import f1_score
+from tmu.data import MNIST
 import json
 
 def batched_train(model, X, y, batch_size, epochs=1):
@@ -45,20 +46,26 @@ def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_gri
 
 if __name__ == "__main__":
     # use these names
+    #    "number_of_clauses" : [1000, 2500, 5000],
+    #    "T" : [40, 120, 200],
+    #    "s" : [5, 10, 15]
+    #}
+
     param_grid = {
-        "number_of_clauses" : [1000, 2500, 5000],
-        "T" : [40, 120, 200],
-        "s" : [5, 10, 15]
+        "number_of_clauses" : [100],
+        "T" : [10],
+        "s" : [5]
     }
     with open("config_main.json") as f:
         config = json.load(f)
 
-    train_X = config["train_x"]
-    train_y = config["train_y"].reshape(-1,)
-    test_x = config["test_x"]
-    test_y = config["test_y"].reshape(-1, )
+    #train_X = config["train_x"]
+    #train_y = config["train_y"].reshape(-1,)
+    #test_x = config["test_x"]
+    #test_y = config["test_y"].reshape(-1, )
+    data = MNIST.get()
     model_class = TMClassifier
-    best_params = hyperparameter_tuning(model_class,train_X,train_y,test_x,test_y,param_grid)
+    best_params = hyperparameter_tuning(model_class,data["x_train"],data['y_train'],data["x_test"],data["y_test"],param_grid)
     print(best_params)
 
 

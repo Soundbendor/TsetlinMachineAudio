@@ -1,22 +1,14 @@
 #!/bin/bash
 #
 #SBATCH --job-name=TMAudio
-#SBATCH --partition=dgxs,dgxh,dgx2
-#SBATCH --gres=gpu:2
-#SBATCH --constraint=el9
-#SBATCH -o sbatch_logs/main.out
-#SBATCH -e sbatch_logs/main.err
+#SBATCH --partition=dgxs,dgxh,dgx2,soundbendor
+#SBATCH --soundbendor
+#SBATCH --mem=10G
+#SBATCH -o main.out
+#SBATCH -e main.err
 
-
-
-source activate test_env/bin/activate
-module load cuda/12.2
-python tmu_test.py
-
-# ARGS: clauses, s, T, weights, epochs, config_file
-# Vowel Set up: 2500, 5, 200, False, 100, config_main.json
-
-
+source env/bin/activate
+python3 tune.py
 
 
 
@@ -32,12 +24,18 @@ python tmu_test.py
 # Vowel Set up: 2500, 5, 200, False, 100, config_main.json
 
 
-#SBATCH --job-name=TMU-TEST
 
-#SBATCH -o sbatch_logs/main.out 
+
+
+#SBATCH --job-name=TMAudio
+#SBATCH --partition=dgxs,dgxh,dgx2
+#SBATCH --gres=gpu:2
+#SBATCH --constraint=el9
+#SBATCH -o sbatch_logs/main.out
 #SBATCH -e sbatch_logs/main.err
 
 
-#source env/bin/activate
+
+#source activate test_env/bin/activate
 #module load cuda/12.2
 #python tmu_test.py
