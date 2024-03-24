@@ -92,7 +92,7 @@ if __name__ == "__main__":
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
     train_index, test_index = next(iter(kf.split(X, y)))
     train_x, val_x = X[train_index], X[test_index]
-    train_y, val_y = y[train_index], y[test_index]
+    train_y, val_y = y[train_index].reshape(-1), y[test_index].reshape(-1)
     model_class = TMClassifier
     best_params, best_score, best_scores, best_params_list = find_best_params_multiprocessing(model_class, train_x, train_y, val_x, val_y, param_grid)
     print(best_params)
