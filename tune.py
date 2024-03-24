@@ -69,7 +69,7 @@ if __name__ == "__main__":
     # use these names
     param_grid = {"number_of_clauses": [1000, 2500, 5000],
                   "T": [40, 120, 200],
-                  "s": [5, 10, 15]
+                  "s": [5, 20, 35]
                   }
 
     # with open("config_main.json") as f:
