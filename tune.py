@@ -87,7 +87,7 @@ if __name__ == "__main__":
         mmap_mode="r")
     y = np.load(
         "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_y_ALL_2024-03-16-17-48.npy",
-        mmap_mde="r")
+        mmap_mode="r")
 
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
     train_index, test_index = next(iter(kf.split(X, y)))
