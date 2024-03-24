@@ -1,9 +1,11 @@
 import numpy as np
 from tmu.models.classification.vanilla_classifier import TMClassifier
-from sklearn.model_selection import ParameterGrid
+from sklearn.model_selection import ParameterGrid, StratifiedKFold
 from sklearn.metrics import f1_score
-
+from multiprocessing import Pool
+import multiprocessing
 import json
+
 
 def batched_train(model, X, y, batch_size, epochs=1):
     array_size = len(X)
@@ -16,15 +18,18 @@ def set_model_params(model_class, incremental=True, platform="GPU", seed=1066, *
     return model_class(**params)
 
 
-def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_grid, training_epochs=2, max_epochs=8, search_width=3, tol=1e-4, batch_size=256):
+def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_grid, training_epochs=2, max_epochs=8,
+                          search_width=3, tol=1e-4, batch_size=256):
     best_params = None
     best_score = 0
     no_improvement_count = 0
+    best_scores = []
+    best_params_list = []
 
     for params in ParameterGrid(param_grid):
         model = set_model_params(model_class, **params)
         batched_train(model, X_train, y_train, batch_size, training_epochs)
-        for j in range(max_epochs):
+        for j in tqdm(range(max_epochs)):
             batched_train(model, X_train, y_train, batch_size, epochs=1)
             y_pred = model.predict(X_val)
             score = f1_score(y_val, y_pred, average='micro')
@@ -37,33 +42,57 @@ def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_gri
 
             if no_improvement_count >= search_width:
                 break
+        best_scores.append(best_score)
+        best_params_list.append(best_params)
 
-    return best_params
+    return best_params, best_score, best_scores, best_params_list
 
 
+def find_best_params_multiprocessing(model_class, X_train, y_train, X_val, y_val, param_grid, training_epochs=2, max_epochs=8, search_width=3, tol=1e-4, batch_size=256):
+    num_processes = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(num_processes)
+    results = pool.starmap(hyperparameter_tuning, [(model_class, X_train, y_train, X_val, y_val, param_grid, training_epochs, max_epochs, search_width,tol,batch_size)] * num_processes)
+    pool.close()
+    pool.join()
+
+    best_params_list = []
+    best_scores = []
+
+    for result in results:
+        best_params_list.extend(result[0])
+        best_scores.extend(result[1])
+
+    return best_params_list, best_scores
 
 
 if __name__ == "__main__":
     # use these names
     param_grid = {"number_of_clauses": [1000, 2500, 5000],
-           "T": [40, 120, 200],
-           "s": [5, 10, 15]
-           }
+                  "T": [40, 120, 200],
+                  "s": [5, 10, 15]
+                  }
 
+    # with open("config_main.json") as f:
+    #    config = json.load(f)
 
-    with open("config_main.json") as f:
-        config = json.load(f)
+    # train_x = np.load(config["train_x"], mmap_mode='r')
+    # train_y = np.load(config["train_y"], mmap_mode='r').reshape((-1,))
+    # assert len(train_y.shape) == 1
 
-    train_x = np.load(config["train_x"], mmap_mode='r')
-    train_y = np.load(config["train_y"], mmap_mode='r').reshape((-1,))
-    assert len(train_y.shape) == 1
+    # val_x = np.load(config["test_x"], mmap_mode='r')
+    # val_y = np.load(config["test_y"], mmap_mode='r').reshape(-1, )
+    # assert len(val_y.shape) == 1
+    X = np.load(
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_X_ALL_2024-03-16-17-48.npy",
+        mmap_mode="r")
+    y = np.load(
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_y_ALL_2024-03-16-17-48.npy",
+        mmap_mde="r")
 
-    val_x = np.load(config["test_x"], mmap_mode='r')
-    val_y = np.load(config["test_y"], mmap_mode='r').reshape(-1, )
-    assert len(val_y.shape) == 1
-
+    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
+    train_index, test_index = next(iter(kf.split(X, y)))
+    train_x, val_x = X[train_index], X[test_index]
+    train_y, val_y = y[train_index], y[test_index]
     model_class = TMClassifier
-    best_params = hyperparameter_tuning(model_class,train_x,train_y,val_x,val_y,param_grid)
+    best_params, best_score, best_scores, best_params_list = find_best_params_multiprocessing(model_class, train_x, train_y, val_x, val_y, param_grid)
     print(best_params)
-
-

@@ -16,7 +16,7 @@ def main(args):
     weights = bool(args.weights)
     epochs = int(args.epochs)
     X = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_X_ALL_2024-03-16-17-48.npy", mmap_mode="r")
-    y = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_y_ALL_2024-03-16-17-48.npy",mmap_mde="r")
+    y = np.load("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/singer/singer_y_ALL_2024-03-16-17-48.npy", mmap_mode="r")
 
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
 
