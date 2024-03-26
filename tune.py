@@ -29,7 +29,7 @@ def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_gri
     for params in ParameterGrid(param_grid):
         model = set_model_params(model_class, **params)
         batched_train(model, X_train, y_train, batch_size, training_epochs)
-        for j in tqdm(range(max_epochs)):
+        for j in range(max_epochs):
             batched_train(model, X_train, y_train, batch_size, epochs=1)
             y_pred = model.predict(X_val)
             score = f1_score(y_val, y_pred, average='micro')
