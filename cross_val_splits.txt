@@ -32,3 +32,4 @@ m8
 f5
 
 ### hyperparameters for vowel: 2500 5 200 False 100 config_main.json
+####technique {'T': 40, 'number_of_clauses': 1000, 's': 5}

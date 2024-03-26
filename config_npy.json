@@ -9,6 +9,7 @@
     "n_fft": 800,
     "win_length": 280,
     "hop_length" : 100,
+    "return_bools": false,
     "n_mels" : 80,
     "center" : false,
     "class_type" : "singer",

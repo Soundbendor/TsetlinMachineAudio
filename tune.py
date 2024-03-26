@@ -48,21 +48,6 @@ def hyperparameter_tuning(model_class, X_train, y_train, X_val, y_val, param_gri
     return best_params, best_score, best_scores, best_params_list
 
 
-def find_best_params_multiprocessing(model_class, X_train, y_train, X_val, y_val, param_grid, training_epochs=2, max_epochs=8, search_width=3, tol=1e-4, batch_size=256):
-    num_processes = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(num_processes)
-    results = pool.starmap(hyperparameter_tuning, [(model_class, X_train, y_train, X_val, y_val, param_grid, training_epochs, max_epochs, search_width,tol,batch_size)] * num_processes)
-    pool.close()
-    pool.join()
-
-    best_params_list = []
-    best_scores = []
-
-    for result in results:
-        best_params_list.extend(result[0])
-        best_scores.extend(result[1])
-
-    return best_params_list, best_scores
 
 
 if __name__ == "__main__":
@@ -94,5 +79,5 @@ if __name__ == "__main__":
     train_x, val_x = X[train_index], X[test_index]
     train_y, val_y = y[train_index].reshape(-1), y[test_index].reshape(-1)
     model_class = TMClassifier
-    best_params, best_score, best_scores, best_params_list = find_best_params_multiprocessing(model_class, train_x, train_y, val_x, val_y, param_grid)
+    best_params, best_score, best_scores, best_params_list = hyperparameter_tuning(TMClassifier,train_x,train_y,val_x,val_y,param_grid)
     print(best_params)
