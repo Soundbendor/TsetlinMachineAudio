@@ -49,13 +49,11 @@ def train_ml_algo(model, params):
     param_grid = params
     model = model(random_state=1066)
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=2, scoring='f1_micro', n_jobs=-1)
-    grid_search.fit(x_tr_files[0], y_tr_files[0])
+    grid_search.fit(np.load(x_tr_files[0], mmap_mode='r'), np.load(y_tr_files[0], mmap_mode='r'))
     best_model = grid_search.best_estimator_
 
     res_list = [grid_search.best_params_]
     for i in range(len(x_tr_files)):
-
-
 
         x_tr = np.load(x_tr_files[i], mmap_mode='r')
         x_te = np.load(x_te_files[i], mmap_mode='r')
