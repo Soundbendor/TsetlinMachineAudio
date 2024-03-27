@@ -9,13 +9,42 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 import pickle
 import argparse
+import os
+
+
+
+
+
+
 
 def train_ml_algo(model, params):
     # pre-assign data
-    x_tr_files = []
-    x_te_files = []
-    y_tr_files = []
-    y_te_files = []
+    x_tr_files = [
+        '/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_1_2024-03-14-17-22.npy',
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_2_2024-03-14-18-35.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_3_2024-03-14-19-52.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_4_2024-03-14-16-39.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_fold_5_2024-03-14-20-21.npy"]
+    x_te_files = [
+        '/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_1_2024-03-14-17-26.npy',
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_2_2024-03-14-18-40.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_3_2024-03-14-19-56.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_4_2024-03-14-16-42.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_fold_5_2024-03-14-20-25.npy"]
+    y_tr_files = [
+        '/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_1_2024-03-14-17-22.npy',
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_2_2024-03-14-18-35.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_3_2024-03-14-19-52.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_4_2024-03-14-16-39.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_fold_5_2024-03-14-20-21.npy"]
+    y_te_files = [
+        '/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_1_2024-03-14-17-26.npy',
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_2_2024-03-14-18-40.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_3_2024-03-14-19-56.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_4_2024-03-14-16-42.npy",
+        "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_test_fold_5_2024-03-14-20-25.npy"]
+
+
 
     param_grid = params
     model = model(random_state=1066)
@@ -25,6 +54,9 @@ def train_ml_algo(model, params):
 
     res_list = [grid_search.best_params_]
     for i in range(len(x_tr_files)):
+
+
+
         x_tr = np.load(x_tr_files[i], mmap_mode='r')
         x_te = np.load(x_te_files[i], mmap_mode='r')
         y_tr = np.load(y_tr_files[i], mmap_mode='r')
