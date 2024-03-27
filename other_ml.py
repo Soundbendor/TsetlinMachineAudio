@@ -82,8 +82,8 @@ def main(args):
     # Define the models and parameter grids
     models_and_params = [
         (SVC, {'kernel': ['linear', 'rbf'], 'C': [0.1, 1, 10], 'gamma': ['auto', 2/550]}),
-        (RandomForestClassifier, {'n_estimators': [50, 100, 200], 'max_depth': [None, 10, 20]},
-         MLPClassifier, {'hidden_layer_sizes': [(100, 100), (600, 600), (11000, 11000)]})
+        (RandomForestClassifier, {'n_estimators': [50, 100, 200], 'max_depth': [None, 10, 20]}),
+         (MLPClassifier, {'hidden_layer_sizes': [(100, 100), (600, 600), (11000, 11000)]})
     ]
 
     # Use multiprocessing.Pool to parallelize the training
