@@ -34,7 +34,7 @@ def main(args):
     test_preds_list = []
     for train_index, test_index in kf.split(X, y):
         train_x, val_x = X[train_index], X[test_index]
-        train_y, val_y = y[train_index], y[test_index]
+        train_y, val_y = y[train_index].reshape(-1), y[test_index].reshape(-1)
         train_accuracy_list = []
         val_accuracy_list = []
         for e in range(epochs):
