@@ -77,23 +77,23 @@ def train_ml_algo(model, params):
 
 def main(args):
     pickle_path = args.pickle_path
+    ml_algo = args.ml_algo
     # Define the models and parameter grids
-    models_and_params = [
-        (SVC, {'kernel': ['linear', 'rbf'], 'C': [0.1, 1, 10], 'gamma': ['auto', 2/550]}),
-        (RandomForestClassifier, {'n_estimators': [50, 100, 200], 'max_depth': [None, 10, 20]}),
-         (MLPClassifier, {'hidden_layer_sizes': [(100, 100), (600, 600), (11000, 11000)]})
-    ]
+    models_and_params = {
+        "svm":(SVC, {'kernel': ['linear', 'rbf'], 'C': [0.1, 1, 10], 'gamma': ['auto', 2/550]}),
+        "rf": (RandomForestClassifier, {'n_estimators': [50, 100, 200], 'max_depth': [None, 10, 20]}),
+        "mlp": (MLPClassifier, {'hidden_layer_sizes': [(100, 100), (600, 600), (11000, 11000)]})
+    }
 
-    # Use multiprocessing.Pool to parallelize the training
-    with multiprocessing.Pool() as pool:
-        model_folds_results = pool.starmap(train_ml_algo, models_and_params)
+    results = train_ml_algo(*models_and_params[ml_algo])
 
     with open(pickle_path,"rb") as f:
-        pickle.dump(model_folds_results,f)
+        pickle.dump(results,f)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train the other models")
+    parser.add_argument("ml_algo",help="[svm,rf,mlp]")
     parser.add_argument("pickle_path", help="Where should results be stored?")
     args = parser.parse_args()
     main(args)
