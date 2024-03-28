@@ -4,7 +4,7 @@ from librosa.feature import mfcc as MFCC
 from sklearn.preprocessing import KBinsDiscretizer
 from pydub import AudioSegment
 from sklearn.utils import shuffle
-
+import pickle
 import re
 import os
 import json
@@ -292,8 +292,8 @@ def main():
 
     X, Y = shuffle(X, Y)
 
-    np.save(x_file_path, X)
-    np.save(y_file_path, Y)
+    #np.save(x_file_path, X)
+    #np.save(y_file_path, Y)
 
     print(f"Training data processed: final shape of training X: {X.shape} and Y: {Y.shape}")
 
@@ -311,8 +311,12 @@ def main():
 
         test_X, test_y = shuffle(test_X, test_y)
 
-        np.save(test_x_file_path, test_X)
-        np.save(test_y_file_path, test_y)
+        #np.save(test_x_file_path, test_X)
+        #np.save(test_y_file_path, test_y)
+
+    data_dict = {"x_train": X,"x_test": test_X, "y_train" : Y, "y_test": test_Y}
+    with open(get_save_path([config["class_type"], "all", "folds", config["data_out_path"]], "wb")) as f:
+        pickle.dump(data_dict,f)
 
     log_name = os.path.join(config["data_out_path"], "log{}".format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')))
     shutil.copyfile("config_npy.json", log_name)

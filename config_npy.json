@@ -4,12 +4,12 @@
     "bit_depth" : 16,
     "n_mfcc" : 13,
     "log_mel": true,
-    "num_quantiles" : 8,
+    "num_quantiles" : 2,
     "boolean_encoding" : "ordinal",
     "n_fft": 800,
     "win_length": 280,
     "hop_length" : 100,
-    "return_bools": true,
+    "return_bools": false,
     "n_mels" : 80,
     "center" : false,
     "class_type" : "vowel",
@@ -18,5 +18,5 @@
     "train_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/data_by_singer/",
     "test_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/test/",
     "data_out_path" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/",
-    "fold" : "1_8_quantiles"
+    "fold" : "all"
 }
