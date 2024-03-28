@@ -131,7 +131,7 @@ def process_audio(input_file, config, verbose=False):
             warnings.warn(f"No singer match found in file: {input_file}")
             return None
     elif class_type == "technique":
-        file_pattern = r'(vibrato|straight|breathy|vocal_fry|lip_trill|trill|trillo|inhaled|belt|spoken)'
+        file_pattern = r'\b(vibrato|straight|breathy|vocal_fry|lip_trill|trill|trillo|inhaled|belt|spoken)\b'
         match = re.search(file_pattern, input_file)
         if match:
             if verbose:
