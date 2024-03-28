@@ -22,7 +22,19 @@ def get_save_path(args, HEAD):
     return result_path
 
 
-# TODO consider downsampling
+def convert_to_binary(array):
+    max_value = np.max(array)
+    num_bits = int(np.ceil(np.log2(max_value + 1)))  # Determine number of bits needed
+    binary_array = np.zeros((array.shape[0], array.shape[1] * num_bits), dtype=int)
+    
+    # Calculate powers of 2 to vectorize the conversion
+    powers_of_2 = 2 ** np.arange(num_bits - 1, -1, -1)
+    
+    # Compute binary representation using vectorized operations
+    for i in range(num_bits):
+        binary_array[:, i::num_bits] = (array >> (num_bits - i - 1)) & 1
+    
+    return binary_array
 
 
 def shrink_to_1_1(x, bit_depth):
@@ -77,16 +89,17 @@ def booleanize(x, booleanizer, config, train=True):
             x = x.reshape(n * t, m)
             if train:
                 x_bools = booleanizer.fit_transform(x)
-                x_bools = x_bools.reshape(n, t * m * config["num_quantiles"])
+                x_bools = x_bools.reshape(n, -1)
             else:
                 x_bools = booleanizer.transform(x)
-                x_bools = x_bools.reshape(n, t * m * config["num_quantiles"])
+                x_bools = x_bools.reshape(n, -1)
         elif len(x.shape) == 2:
             if train:
                 x_bools = booleanizer.fit_transform(x)
             else:
                 x_bools = booleanizer.transform(x)
-    return x_bools.astype("?")
+    return convert_to_binary(x_bools.astype(np.uint8)).astype("?")
+    #return x_bools.astype("?")
 
 
 def process_audio(input_file, config, verbose=False):
