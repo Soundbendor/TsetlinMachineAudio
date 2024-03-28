@@ -315,7 +315,7 @@ def main():
         #np.save(test_y_file_path, test_y)
 
     data_dict = {"x_train": X,"x_test": test_X, "y_train" : Y, "y_test": test_Y}
-    with open(get_save_path([config["class_type"], "all", "folds", config["data_out_path"]], "wb")) as f:
+    with open(get_save_path([config["class_type"], "all", config["fold"], config["data_out_path"]], "wb")) as f:
         pickle.dump(data_dict,f)
 
     log_name = os.path.join(config["data_out_path"], "log{}".format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')))
