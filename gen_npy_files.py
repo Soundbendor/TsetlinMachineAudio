@@ -89,10 +89,10 @@ def booleanize(x, booleanizer, config, train=True):
             x = x.reshape(n * t, m)
             if train:
                 x_bools = booleanizer.fit_transform(x)
-                x_bools = x_bools.reshape(n, t * m * config["num_quantiles"])
+                x_bools = x_bools.reshape(n, -1)
             else:
                 x_bools = booleanizer.transform(x)
-                x_bools = x_bools.reshape(n, t * m * config["num_quantiles"])
+                x_bools = x_bools.reshape(n, -1)
         elif len(x.shape) == 2:
             if train:
                 x_bools = booleanizer.fit_transform(x)
