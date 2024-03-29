@@ -114,61 +114,18 @@ def process_audio(input_file, config, verbose=False):
 
     # assign labels based on class type
 
-    if class_type == "vowel":
-        file_pattern = r'_([aeiou]).wav'
-        match = re.search(file_pattern, input_file)
-        if match:
-            if verbose:
-                print(f"Pattern match found: {match.group(1)}")
-            vowel = match.group(1)
-            vowel_to_class = {'a': 0, 'e': 1, 'i': 2, 'o': 3, 'u': 4}
-            label = vowel_to_class.get(vowel)
-        else:
-            warnings.warn(f"No vowel match found in file: {input_file}")
-            return None
-    elif class_type == "singer":
-        file_pattern = r'(male|female)([0-9][0-1]?|[0-9][0-1]?)'
-        match = re.search(file_pattern, input_file)
-        # male [0-10], female[11-19]
-        if match:
-            if verbose:
-                print(f"Pattern match found: {match.group(1)}")
-            sex_to_class = {'male': 0, 'female': 1}
-            sex = sex_to_class[match.group(1)]
-            if sex == 0:
-                id = int(match.group(2)) - 1
-            else:
-                id = int(match.group(2)) + 10
-            label = id
-        else:
-            warnings.warn(f"No singer match found in file: {input_file}")
-            return None
-    elif class_type == "technique":
-        file_pattern = r'\b(vibrato|straight|breathy|vocal_fry|lip_trill|trill|trillo|inhaled|belt|spoken)\b'
-        match = re.search(file_pattern, input_file)
-        if match:
-            if verbose:
-                print(f"Pattern match found: {match.group(1)}")
-            tech_to_class = {
-                'vibrato': 0,
-                'straight': 1,
-                'breathy': 2,
-                'vocal_fry': 3,
-                'lip_trill': 4,
-                'trill': 5,
-                'trillo': 6,
-                'inhaled': 7,
-                'belt': 8,
-                'spoken': 9
-            }
-            label = tech_to_class[match.group(1)]
-        else:
-            warnings.warn(f"No technique match found in file: {input_file}")
-            return None
-    else:
-        raise ValueError("No classification type found.")
 
-    # No matter what, determine singer:
+    file_pattern = r'_([aeiou]).wav'
+    match = re.search(file_pattern, input_file)
+    if match:
+        if verbose:
+            print(f"Pattern match found: {match.group(1)}")
+        vowel = match.group(1)
+        vowel_to_class = {'a': 0, 'e': 1, 'i': 2, 'o': 3, 'u': 4}
+        vowel_label = vowel_to_class.get(vowel)
+    else:
+        vowel_label = -1
+
     file_pattern = r'(male|female)([0-9][0-1]?|[0-9][0-1]?)'
     match = re.search(file_pattern, input_file)
     # male [0-10], female[11-19]
@@ -181,10 +138,32 @@ def process_audio(input_file, config, verbose=False):
             id = int(match.group(2)) - 1
         else:
             id = int(match.group(2)) + 10
-        singer_id = id
+        singer_label = id
     else:
-        warnings.warn(f"No singer match found in file: {input_file}")
-        return None
+        singer_label = -1
+
+    file_pattern = r'\b(vibrato|straight|breathy|vocal_fry|lip_trill|trill|trillo|inhaled|belt|spoken)\b'
+    match = re.search(file_pattern, input_file)
+    if match:
+        if verbose:
+            print(f"Pattern match found: {match.group(1)}")
+        tech_to_class = {
+            'vibrato': 0,
+            'straight': 1,
+            'breathy': 2,
+            'vocal_fry': 3,
+            'lip_trill': 4,
+            'trill': 5,
+            'trillo': 6,
+            'inhaled': 7,
+            'belt': 8,
+            'spoken': 9
+        }
+        tech_label = tech_to_class[match.group(1)]
+    else:
+        tech_label = -1
+
+    label = (vowel_label,tech_label,singer_label)
 
     # Remove silence from beginning and end
     sound = AudioSegment.from_wav(input_file)
@@ -222,14 +201,14 @@ def process_audio(input_file, config, verbose=False):
                 "seg_length"], f"Padding failed: Frames = {padded_seg.sahpe[0]}, input = {num_frames}, curr_file: {input_file}"
 
             processed_segments.append(padded_seg)
-            labels.append((label,singer_id))
+            labels.append(label)
 
         # If segment is exactly correct
         elif int(num_frames) == config["seg_length"]:
             if verbose:
                 print(f"Segment {i} length correct. Length: {num_frames}")
             processed_segments.append(np.array(segment.get_array_of_samples(), dtype=np.float32))
-            labels.append((label,singer_id))
+            labels.append(label)
 
         # If segment needs to be trimmed down
         elif int(num_frames) > config["seg_length"]:
@@ -244,7 +223,7 @@ def process_audio(input_file, config, verbose=False):
                 "seg_length"], f"Trimming failed: Frames = {trimmed.shape[0]}, input = {num_frames}, curr_file: {input_file}"
 
             processed_segments.append(trimmed)
-            labels.append((label,singer_id))
+            labels.append(label)
         else:
             raise AttributeError("Unknown error. Check number of frames, format, etc.")
         if len(processed_segments) > 0:
