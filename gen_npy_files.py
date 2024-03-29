@@ -17,7 +17,7 @@ def get_save_path(args, HEAD):
     """Make save path
     """
     date = '{}'.format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M'))
-    suffix = "{}_{}_{}_{}".format(args[0], args[1], args[2], date)
+    suffix = "{}_{}_{}_{}.pickle".format(args[0], args[1], args[2], date)
     result_path = os.path.join(HEAD, suffix)
     return result_path
 
