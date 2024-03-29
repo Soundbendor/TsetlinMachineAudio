@@ -114,6 +114,7 @@ def main(args):
     for fold_num, fold_indices in folds.items():
         test_data_indices = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in fold_indices])
         train_data_indices = np.setdiff1d(np.arange(len(data['x'])), test_data_indices)
+        print(f"test_idx {len(test_data_indices)}, train: {len(train_data_indices)}, total: {len(train_data_indices)+len(test_data_indices)}")
         p = Process(target=train_fold,
                     args=(x_data[train_data_indices],y_data[train_data_indices],x_data[test_data_indices],y_data[test_data_indices], number_clauses, T, s, epochs, batch_size, result_dict, fold_num))
         processes.append(p)
