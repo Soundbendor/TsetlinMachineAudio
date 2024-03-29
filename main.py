@@ -129,7 +129,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train the TM model")
-    parser.add_argument("class_Type", help="vowel or technique")
+    parser.add_argument("class_type", help="vowel or technique")
     parser.add_argument("clauses", help="Number of clauses")
     parser.add_argument("s", help="sensitivity")
     parser.add_argument("T", help="threshold")
@@ -137,3 +137,5 @@ if __name__ == "__main__":
     parser.add_argument("config", help="config file")
     args = parser.parse_args()
     main(args)
+
+"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_2_bools_2024-03-29-14-02"
