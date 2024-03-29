@@ -10,6 +10,8 @@ import datetime
 import argparse
 from sklearn.metrics import accuracy_score
 from multiprocessing import Process, Manager
+
+
 #
 
 # logging.getLogger('matplotlib').setLevel(logging.WARNING)
@@ -32,7 +34,7 @@ def batched_train(model, X, y, batch_size, epochs=1):
         model.fit(X[i:i + batch_size], y[i:i + batch_size], epochs=epochs)
 
 
-def train_fold(fold, number_clauses, T, s, epochs, batch_size, result_dict, fold_num):
+def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, batch_size, result_dict, fold_num):
     model = vanilla_classifier.TMClassifier(number_clauses,
                                             T=T,
                                             s=s,
@@ -41,8 +43,7 @@ def train_fold(fold, number_clauses, T, s, epochs, batch_size, result_dict, fold
                                             platform='GPU',
                                             seed=1066)
 
-    train_x, val_x = fold["x_train"], fold["x_test"]
-    train_y, val_y = fold["y_train"].reshape(-1), np.array(fold["y_test"]).reshape(-1)
+    train_y, val_y = train_y.reshape(-1), val_y.reshape(-1)
     train_final = []
     val_final = []
 
@@ -64,11 +65,11 @@ def train_fold(fold, number_clauses, T, s, epochs, batch_size, result_dict, fold
     }
 
 
-# @profile
 def main(args):
-    number_clauses=int(args.clauses)
-    s=int(args.s)
-    T=int(args.T)
+    class_type = args.class_type
+    number_clauses = int(args.clauses)
+    s = int(args.s)
+    T = int(args.T)
     epochs = int(args.epochs)
     config_path = args.config
 
@@ -78,47 +79,57 @@ def main(args):
     else:
         raise ValueError("No config path")
 
+    if class_type == "vowel":
+        class_val = 0
+    elif class_type == "technique":
+        class_val = 1
+    else:
+        raise ValueError("No class type")
+
     # Data stuff
-    with open(config["fold_1"], 'rb') as f:
-        fold_1 = pickle.load(f)
-    with open(config["fold_2"], 'rb') as f:
-        fold_2 = pickle.load(f)
-    with open(config["fold_3"], 'rb') as f:
-        fold_3 = pickle.load(f)
-    with open(config["fold_4"], 'rb') as f:
-        fold_4 = pickle.load(f)
-    with open(config["fold_5"], 'rb') as f:
-        fold_5 = pickle.load(f)
+    with open(config["data"], 'rb') as f:
+        data = pickle.load(f)
 
-    folds = [fold_1,fold_2,fold_3,fold_4,fold_5]
+    folds = {  # for singer id
+        0: [1, 10, 16, 17],
+        1: [0, 2, 11, 18],
+        2: [5, 8, 13, 14],
+        3: [4, 9, 12, 19],
+        4: [3, 6, 7, 15],
+    }
+    y_data = ["y"][:,class_type]
+
+
+
     batch_size = 1000
-
     manager = Manager()
     result_dict = manager.dict()
 
     processes = []
 
-    for fold_num, fold_dict in enumerate(folds):
+    for fold_num, fold_indices in folds.items():
+        test_data_indices = np.concatenate([np.where(data['y'][:, -1] == idx)[0] for idx in fold_indices])
+        train_data_indices =  np.setdiff1d(np.arange(len(data['x'])), test_data_indices)
         p = Process(target=train_fold,
-                    args=(fold_dict, number_clauses, T, s, epochs, batch_size, result_dict, fold_num))
+                    args=(data["x"][train_data_indices],y_data[train_data_indices],data['x'][test_data_indices],y_data[test_data_indices], number_clauses, T, s, epochs, batch_size, result_dict, fold_num))
         processes.append(p)
         p.start()
 
     for p in processes:
         p.join()
-    # new comments
+
     # Prepare data for saving
     data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
 
-    pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/technique"
+    pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles"
     pickle_file = get_save_path(["all_folds"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train the TM model")
+    parser.add_argument("class_Type", help="vowel or technique")
     parser.add_argument("clauses", help="Number of clauses")
     parser.add_argument("s", help="sensitivity")
     parser.add_argument("T", help="threshold")
