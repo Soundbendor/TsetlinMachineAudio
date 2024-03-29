@@ -269,6 +269,10 @@ def process_directory(directory, booleanizer, config, train=True, bool_mode=True
         x_out = booleanize(x_out, booleanizer, config)
         return x_out, y_out
     elif not bool_mode:
+        x_out = np.array(x_out)
+        if len(x_out.shape) > 2:
+            n, m, t = x_out.shape
+            x_out = x_out.reshape(n, -1)
         return x_out, y_out  # As MFCCs
 
 
