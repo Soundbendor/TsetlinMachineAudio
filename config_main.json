@@ -1,5 +1,9 @@
 {
-    
+    "fold_1" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/technique/technique_all_fold_1_2024-03-28-17-45",
+    "fold_2" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/technique/technique_all_fold_2_2024-03-28-18-45",
+    "fold_3" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/technique/technique_all_fold_333_2024-03-28-19-11",
+    "fold_4" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/technique/technique_all_fold_4_2024-03-28-19-31",
+    "fold_5" : "",
     "train_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_1_4_quantiles_2024-03-28-13-18.npy",
     "test_x" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_X_test_1_4_quantiles_2024-03-28-13-20.npy",
     "train_y" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_y_1_4_quantiles_2024-03-28-13-18.npy",
