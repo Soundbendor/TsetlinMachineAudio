@@ -53,7 +53,7 @@ def main(args):
         raise ValueError("No class type")
 
     # Data stuff
-    with open("", 'rb') as f:
+    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_mfcc_avg_2024-03-29-16-23.pickle", 'rb') as f:
         data = pickle.load(f)
 
     folds = {  # for singer id
