@@ -76,7 +76,7 @@ def train_ml_algo(model, params):
 
 
 def main(args):
-    pickle_path = args.pickle_path
+    pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles"
     ml_algo = args.ml_algo
     # Define the models and parameter grids
     models_and_params = {
@@ -94,6 +94,5 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train the other models")
     parser.add_argument("ml_algo",help="[svm,rf,mlp]")
-    parser.add_argument("pickle_path", help="Where should results be stored?")
     args = parser.parse_args()
     main(args)
