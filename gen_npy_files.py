@@ -168,6 +168,24 @@ def process_audio(input_file, config, verbose=False):
     else:
         raise ValueError("No classification type found.")
 
+    # No matter what, determine singer:
+    file_pattern = r'(male|female)([0-9][0-1]?|[0-9][0-1]?)'
+    match = re.search(file_pattern, input_file)
+    # male [0-10], female[11-19]
+    if match:
+        if verbose:
+            print(f"Pattern match found: {match.group(1)}")
+        sex_to_class = {'male': 0, 'female': 1}
+        sex = sex_to_class[match.group(1)]
+        if sex == 0:
+            id = int(match.group(2)) - 1
+        else:
+            id = int(match.group(2)) + 10
+        singer_id = id
+    else:
+        warnings.warn(f"No singer match found in file: {input_file}")
+        return None
+
     # Remove silence from beginning and end
     sound = AudioSegment.from_wav(input_file)
     sound = sound.strip_silence(silence_len=100, silence_thresh=-60, padding=40)
@@ -204,14 +222,14 @@ def process_audio(input_file, config, verbose=False):
                 "seg_length"], f"Padding failed: Frames = {padded_seg.sahpe[0]}, input = {num_frames}, curr_file: {input_file}"
 
             processed_segments.append(padded_seg)
-            labels.append(label)
+            labels.append((label,singer_id))
 
         # If segment is exactly correct
         elif int(num_frames) == config["seg_length"]:
             if verbose:
                 print(f"Segment {i} length correct. Length: {num_frames}")
             processed_segments.append(np.array(segment.get_array_of_samples(), dtype=np.float32))
-            labels.append(label)
+            labels.append((label,singer_id))
 
         # If segment needs to be trimmed down
         elif int(num_frames) > config["seg_length"]:
@@ -226,7 +244,7 @@ def process_audio(input_file, config, verbose=False):
                 "seg_length"], f"Trimming failed: Frames = {trimmed.shape[0]}, input = {num_frames}, curr_file: {input_file}"
 
             processed_segments.append(trimmed)
-            labels.append(label)
+            labels.append((label,singer_id))
         else:
             raise AttributeError("Unknown error. Check number of frames, format, etc.")
         if len(processed_segments) > 0:
@@ -302,23 +320,24 @@ def main():
     print(f"Training data processed: final shape of training X: {X.shape} and Y: {Y.shape}")
 
     # Next the Test set using the same statistics as the train. (for booleanizer)
-    TEST_DATA_PATH = config["test_directory"]
-    test_X, test_Y = process_directory(TEST_DATA_PATH, booleanizer, config, train=False, bool_mode=config["return_bools"], verbose=True)
+    #TEST_DATA_PATH = config["test_directory"]
+    #test_X, test_Y = process_directory(TEST_DATA_PATH, booleanizer, config, train=False, bool_mode=config["return_bools"], verbose=True)
 
     test_x_file_path = get_save_path([config["class_type"], "X_test", config["fold"]], config["data_out_path"])
     test_y_file_path = get_save_path([config["class_type"], "y_test", config["fold"]], config["data_out_path"])
 
-    if test_X is not None:
-        if type(test_X) == list:
-            test_X = np.vstack(test_X)
-        test_y = np.vstack(test_Y)
-
-        test_X, test_y = shuffle(test_X, test_y)
+    #if test_X is not None:
+    #    if type(test_X) == list:
+    #        test_X = np.vstack(test_X)
+    #    test_y = np.vstack(test_Y)
+#
+#        test_X, test_y = shuffle(test_X, test_y)
 
         #np.save(test_x_file_path, test_X)
         #np.save(test_y_file_path, test_y)
 
-    data_dict = {"x_train": X,"x_test": test_X, "y_train" : Y, "y_test": test_Y}
+    #data_dict = {"x_train": X,"x_test": test_X, "y_train" : Y, "y_test": test_y}
+    data_dict = {"x": X, "y":Y}
     with open(get_save_path([config["class_type"], "all", config["fold"]], config["data_out_path"]), "wb") as f:
         pickle.dump(data_dict,f)
 
