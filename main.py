@@ -97,7 +97,7 @@ def main(args):
         3: [4, 9, 12, 19],
         4: [3, 6, 7, 15],
     }
-    y_data = data["y"][:, class_type]
+    y_data = data["y"][:, class_val]
 
 
 
