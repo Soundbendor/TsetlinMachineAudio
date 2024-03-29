@@ -48,7 +48,7 @@ def train_ml_algo(model, params):
 
     param_grid = params
     model = model(random_state=1066)
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=2, scoring='f1_micro', n_jobs=-1)
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=-1)
     grid_search.fit(np.load(x_tr_files[0], mmap_mode='r'), np.load(y_tr_files[0], mmap_mode='r'))
     best_model = grid_search.best_estimator_
 
@@ -66,7 +66,7 @@ def train_ml_algo(model, params):
 
         # Evaluate the model
         accuracy = accuracy_score(y_te, y_pred)
-        f1 = f1_score(y_te, y_pred)
+        f1 = f1_score(y_te, y_pred,average='micro')
         cm = confusion_matrix(y_te, y_pred)
 
         res_dict = {"label": f"fold_{i + 1}", "acc": accuracy, "f1": f1, "cm": confusion_matrix}
