@@ -100,7 +100,9 @@ def main(args):
     y_data = data["y"][:, class_val]
     y_indices = np.where(y_data != -1)[0]
     y_data = y_data[y_indices]
+    x_data = data["x"][y_indices]
 
+    check_y = data["y"][y_indices]
     batch_size = 1000
     manager = Manager()
     result_dict = manager.dict()
@@ -108,10 +110,10 @@ def main(args):
     processes = []
 
     for fold_num, fold_indices in folds.items():
-        test_data_indices = np.concatenate([np.where(data['y'][:, -1] == idx)[0] for idx in fold_indices])
-        train_data_indices =  np.setdiff1d(np.arange(len(data['x'])), test_data_indices)
+        test_data_indices = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in fold_indices])
+        train_data_indices = np.setdiff1d(np.arange(len(data['x'])), test_data_indices)
         p = Process(target=train_fold,
-                    args=(data["x"][train_data_indices],y_data[train_data_indices],data['x'][test_data_indices],y_data[test_data_indices], number_clauses, T, s, epochs, batch_size, result_dict, fold_num))
+                    args=(x_data[train_data_indices],y_data[train_data_indices],x_data[test_data_indices],y_data[test_data_indices], number_clauses, T, s, epochs, batch_size, result_dict, fold_num))
         processes.append(p)
         p.start()
 
