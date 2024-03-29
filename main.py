@@ -98,8 +98,8 @@ def main(args):
         4: [3, 6, 7, 15],
     }
     y_data = data["y"][:, class_val]
-
-
+    y_indices = np.where(y_data != -1)[0]
+    y_data = y_data[y_indices]
 
     batch_size = 1000
     manager = Manager()
