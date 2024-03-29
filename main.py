@@ -42,7 +42,7 @@ def train_fold(fold, number_clauses, T, s, epochs, batch_size, result_dict, fold
                                             seed=1066)
 
     train_x, val_x = fold["x_train"], fold["x_test"]
-    train_y, val_y = fold["y_train"].reshape(-1), fold["y_test"].reshape(-1)
+    train_y, val_y = fold["y_train"].reshape(-1), np.array(fold["y_test"]).reshape(-1)
     train_final = []
     val_final = []
 
