@@ -104,7 +104,7 @@ def main(args):
 
     check_y = data["y"][y_indices]
 
-    print(f"classed data length: {len(y_data)}. full_set_indexed: {len(check_y)}")
+    print(f"classed data length: {len(y_data)}. full_set_indexed: {len(check_y)}, x_size: {len(x_data)}")
     batch_size = 1000
     manager = Manager()
     result_dict = manager.dict()
