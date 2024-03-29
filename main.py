@@ -69,7 +69,6 @@ def main(args):
     number_clauses=int(args.clauses)
     s=int(args.s)
     T=int(args.T)
-    weights = bool(args.weights)
     epochs = int(args.epochs)
     config_path = args.config
 
@@ -80,15 +79,15 @@ def main(args):
         raise ValueError("No config path")
 
     # Data stuff
-    with open(config["fold_1_path"], 'rb') as f:
+    with open(config["fold_1"], 'rb') as f:
         fold_1 = pickle.load(f)
-    with open(config["fold_2_path"], 'rb') as f:
+    with open(config["fold_2"], 'rb') as f:
         fold_2 = pickle.load(f)
-    with open(config["fold_3_path"], 'rb') as f:
+    with open(config["fold_3"], 'rb') as f:
         fold_3 = pickle.load(f)
-    with open(config["fold_4_path"], 'rb') as f:
+    with open(config["fold_4"], 'rb') as f:
         fold_4 = pickle.load(f)
-    with open(config["fold_5_path"], 'rb') as f:
+    with open(config["fold_5"], 'rb') as f:
         fold_5 = pickle.load(f)
 
     folds = [fold_1,fold_2,fold_3,fold_4,fold_5]
