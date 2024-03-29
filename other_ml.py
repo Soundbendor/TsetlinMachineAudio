@@ -74,7 +74,7 @@ def main(args):
     fold_1_test_idx = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in folds[0]])
     fold_1_train_idx = np.setdiff1d(np.arange(len(x_data)), fold_1_test_idx)
 
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=-1)
+    grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=-1)
     grid_search.fit(x_data[fold_1_train_idx], y_data[fold_1_train_idx])
     best_params = grid_search.best_params_
 
