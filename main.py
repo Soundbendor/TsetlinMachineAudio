@@ -8,8 +8,8 @@ import logging
 import pickle
 import datetime
 import argparse
-
-# import neptune
+from sklearn.metrics import accuracy_score
+from multiprocessing import Process, Manager
 #
 
 # logging.getLogger('matplotlib').setLevel(logging.WARNING)
@@ -32,6 +32,38 @@ def batched_train(model, X, y, batch_size, epochs=1):
         model.fit(X[i:i + batch_size], y[i:i + batch_size], epochs=epochs)
 
 
+def train_fold(fold, number_clauses, T, s, epochs, batch_size, result_dict, fold_num):
+    model = vanilla_classifier.TMClassifier(number_clauses,
+                                            T=T,
+                                            s=s,
+                                            number_of_state_bits_ta=100,
+                                            incremental=True,
+                                            platform='GPU',
+                                            seed=1066)
+
+    train_x, val_x = fold["x_train"], fold["x_test"]
+    train_y, val_y = fold["y_train"].reshape(-1), fold["y_test"].reshape(-1)
+    train_final = []
+    val_final = []
+
+    for e in range(epochs):
+        batched_train(model, train_x, train_y, batch_size)
+        train_preds = model.predict(train_x)
+        val_preds = model.predict(val_x)
+
+        train_acc = accuracy_score(train_y, train_preds)
+        val_acc = accuracy_score(val_y, val_preds)
+
+        train_final.append(train_acc)
+        val_final.append(val_acc)
+
+    result_dict[fold_num] = {
+        "train_acc": train_final,
+        "val_acc": val_final,
+        "preds": np.array(val_preds).tolist()  # Convert to list to be pickleable
+    }
+
+
 # @profile
 def main(args):
     number_clauses=int(args.clauses)
@@ -48,52 +80,41 @@ def main(args):
         raise ValueError("No config path")
 
     # Data stuff
+    with open(config["fold_1_path"], 'rb') as f:
+        fold_1 = pickle.load(f)
+    with open(config["fold_2_path"], 'rb') as f:
+        fold_2 = pickle.load(f)
+    with open(config["fold_3_path"], 'rb') as f:
+        fold_3 = pickle.load(f)
+    with open(config["fold_4_path"], 'rb') as f:
+        fold_4 = pickle.load(f)
+    with open(config["fold_5_path"], 'rb') as f:
+        fold_5 = pickle.load(f)
 
-    train_x = np.load(config["train_x"], mmap_mode='r')
-    train_y = np.load(config["train_y"], mmap_mode='r').reshape((-1,))
-    assert len(train_y.shape) == 1
-
-    val_x = np.load(config["test_x"], mmap_mode='r')
-    val_y = np.load(config["test_y"], mmap_mode='r').reshape(-1, )
-
-    
-
-    model = vanilla_classifier.TMClassifier(number_clauses,
-                                            T=T,
-                                            s=s,
-                                            number_of_state_bits_ta=100,
-                                            incremental=True,
-                                            platform='GPU',
-                                            weighted_clauses=weights,
-                                            seed=1066)
-
-    
-
+    folds = [fold_1,fold_2,fold_3,fold_4,fold_5]
     batch_size = 1000
-    # train loop
-    train_accuracy_list = []
-    val_accuracy_list = []
-    test_preds_list = []
-    for e in range(epochs):
-        # model.fit(train_x,train_y,epochs=1)
-        batched_train(model, train_x, train_y, batch_size) # internal epoch set to 1
-        train_preds = model.predict(train_x)
-        val_preds = model.predict(val_x)
 
-        train_acc = np.mean(train_preds == train_y)
-        train_accuracy_list.append(train_acc)
-        val_acc = np.mean(val_preds == val_y)
-        val_accuracy_list.append(val_acc)
-        test_preds_list.append(val_preds)
+    manager = Manager()
+    result_dict = manager.dict()
 
+    processes = []
 
-    # Bookkeeping stuff here:
-    pickle_path = config["pickle_path"]
-    pickle_file = get_save_path([config["description"]], pickle_path)
+    for fold_num, fold_dict in enumerate(folds):
+        p = Process(target=train_fold,
+                    args=(fold_dict, number_clauses, T, s, epochs, batch_size, result_dict, fold_num))
+        processes.append(p)
+        p.start()
 
-    to_pickle = [train_accuracy_list, val_accuracy_list, test_preds_list]  
+    for p in processes:
+        p.join()
+
+    # Prepare data for saving
+    data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
+
+    pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/technique"
+    pickle_file = get_save_path(["all_folds"], pickle_path)
     with open(pickle_file, "wb") as f:
-        pickle.dump(to_pickle, f)
+        pickle.dump(data_dict, f)
 
 
 
@@ -102,7 +123,6 @@ if __name__ == "__main__":
     parser.add_argument("clauses", help="Number of clauses")
     parser.add_argument("s", help="sensitivity")
     parser.add_argument("T", help="threshold")
-    parser.add_argument("weights",help="integer weights")
     parser.add_argument("epochs", help="Number of training epochs")
     parser.add_argument("config", help="config file")
     args = parser.parse_args()
