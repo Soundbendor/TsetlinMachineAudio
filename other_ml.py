@@ -99,7 +99,7 @@ def main(args):
 
     data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
     pickle_path = f"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/{ml_algo}_{class_type}"
-    with open(pickle_path, "rb") as f:
+    with open(pickle_path, "wb") as f:
         pickle.dump(data_dict, f)
 
 
