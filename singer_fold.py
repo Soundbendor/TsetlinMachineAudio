@@ -86,14 +86,10 @@ def main(args):
     processes = []
 
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
-        print(f"{fold}")
-       train_fold(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-                          number_clauses, T, s, epochs, batch_size, result_dict, fold))
+         print(f"{fold}")
+         train_fold(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+                          number_clauses, T, s, epochs, batch_size, result_dict, fold)
 
-
-    while not result_queue.empty():
-        fold, result = result_queue.get()
-        result_dict[fold] = result
 
     # Prepare data for saving
     data_dict = dict(result_dict)
