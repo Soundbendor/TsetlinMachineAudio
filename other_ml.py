@@ -87,7 +87,7 @@ def parallel_train(class_type, model, param_grid):
         kf = StratifiedKFold(shuffle=True,random_state=1066)
         train_idx, test_idx = next(kf.split(x_data,check_y[:,-2]))
         grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=-1)
-        grid_search.fit(x_data[train_idx], y_data[test_idx])
+        grid_search.fit(x_data[train_idx], y_data[train_idx])
         best_params = grid_search.best_params_
         #return best_params
         for i,(train_idx,test_idx) in folds.items():
