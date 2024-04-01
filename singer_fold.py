@@ -76,9 +76,7 @@ def main(args):
 
     y_strat = data["y"][:, -2][y_indices]  # stratify by techniques
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
-
     print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
-
     batch_size = 1000
     manager = Manager()
     result_dict = manager.dict()
@@ -96,7 +94,7 @@ def main(args):
         p.join()
 
     # Prepare data for saving
-    data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
+    data_dict = dict(result_dict)
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/singer"
     pickle_file = get_save_path(["singer", "all_folds"], pickle_path)
