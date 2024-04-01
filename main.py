@@ -8,14 +8,10 @@ import logging
 import pickle
 import datetime
 import argparse
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score
 from multiprocessing import Process, Manager
 
 
-#
-
-# logging.getLogger('matplotlib').setLevel(logging.WARNING)
-# logging.getLogger("neptune").setLevel(logging.CRITICAL)
 def get_save_path(args, HEAD):
     """Make save path
     """
@@ -23,9 +19,6 @@ def get_save_path(args, HEAD):
     suffix = "{}_{}".format(args[0], date)
     result_path = os.path.join(HEAD, suffix)
     return result_path
-
-
-# TODO consider wrapping neptune in debug == False ctrl-F all neptune calls
 
 
 def batched_train(model, X, y, batch_size, epochs=1):
@@ -46,7 +39,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
     train_y, val_y = train_y.reshape(-1), val_y.reshape(-1)
     train_final = []
     val_final = []
-
+    f1_final = []
     for e in range(epochs):
         batched_train(model, train_x, train_y, batch_size)
         train_preds = model.predict(train_x)
@@ -54,14 +47,15 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
 
         train_acc = accuracy_score(train_y, train_preds)
         val_acc = accuracy_score(val_y, val_preds)
-
+        f1_val = f1_score(val_y, val_preds, average='micro')
         train_final.append(train_acc)
         val_final.append(val_acc)
+        f1_final.append(f1_val)
 
     result_dict[fold_num] = {
         "train_acc": train_final,
         "val_acc": val_final,
-        "preds": np.array(val_preds).tolist()  # Convert to list to be pickleable
+        "f1": f1_final
     }
 
 
@@ -114,9 +108,11 @@ def main(args):
     for fold_num, fold_indices in folds.items():
         test_data_indices = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in fold_indices])
         train_data_indices = np.setdiff1d(np.arange(len(x_data)), test_data_indices)
-        print(f"test_idx {len(test_data_indices)}, train: {len(train_data_indices)}, total: {len(train_data_indices)+len(test_data_indices)}")
+        print(
+            f"test_idx {len(test_data_indices)}, train: {len(train_data_indices)}, total: {len(train_data_indices) + len(test_data_indices)}")
         p = Process(target=train_fold,
-                    args=(x_data[train_data_indices],y_data[train_data_indices],x_data[test_data_indices],y_data[test_data_indices], number_clauses, T, s, epochs, batch_size, result_dict, fold_num))
+                    args=(x_data[train_data_indices], y_data[train_data_indices], x_data[test_data_indices],
+                          y_data[test_data_indices], number_clauses, T, s, epochs, batch_size, result_dict, fold_num))
         processes.append(p)
         p.start()
 
@@ -143,4 +139,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     main(args)
 
-"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_2_bools_2024-03-29-14-02"
+
