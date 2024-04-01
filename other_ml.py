@@ -84,7 +84,7 @@ def parallel_train(class_type, model, param_grid):
             p.start()
 
     else:
-        kf = StratifiedKFold(random_state=1066)
+        kf = StratifiedKFold(shuffle=True,random_state=1066)
         train_idx, test_idx = next(kf.split(x_data,check_y[:,-2]))
         grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=-1)
         grid_search.fit(x_data[train_idx], y_data[test_idx])
@@ -127,6 +127,6 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train the other models")
     parser.add_argument("ml_algo", help="[svm,rf,mlp]")
-    parser.add_argument("class_type", help="vowel, technique")
+    parser.add_argument("class_type", help="vowel, technique, singer")
     args = parser.parse_args()
     main(args)
