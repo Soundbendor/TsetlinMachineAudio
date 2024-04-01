@@ -111,7 +111,7 @@ def main(args):
     models_and_params = {
         "svm": (SVC, {'kernel': ['linear', 'rbf'], 'C': [0.1, 1, 10], 'gamma': ['auto', 2 / 550]}),
         "rf": (RandomForestClassifier, {'n_estimators': [50, 100, 200], 'max_depth': [None, 10, 20]}),
-        "mlp": (MLPClassifier, {'hidden_layer_sizes': [(100, 100), (1000, 1000), (10000, 10000)]})
+        "mlp": (MLPClassifier, {'hidden_layer_sizes': [(100, 100), (1000, 1000), (10000, 10000)],"max_iter" : [500]})
     }
 
     model, param_grid = models_and_params[ml_algo]
