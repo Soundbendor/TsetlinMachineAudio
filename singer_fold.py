@@ -8,7 +8,10 @@ from sklearn.metrics import accuracy_score
 from multiprocessing import Process, Manager
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
+from multiprocessing import Lock
 
+
+lock = Lock()
 
 def get_save_path(args, HEAD):
     """Make save path
@@ -50,11 +53,12 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
         val_final.append(val_acc)
         f1_final.append(f1_val)
 
-    result_dict[fold_num] = {
-        "train_acc": train_final,
-        "val_acc": val_final,
-        "f1": f1_final
-    }
+    with lock:
+        result_dict[fold_num] = {
+            "train_acc": train_final,
+            "val_acc": val_final,
+            "f1": f1_final
+        }
 
 
 def main(args):
