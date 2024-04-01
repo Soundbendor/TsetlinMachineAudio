@@ -42,7 +42,6 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
                                             seed=1066)
 
     print(f"fold: {fold_num} Training start.")
-    print(f"Singers are: {np.unique(train_y)}")
     train_y, val_y = train_y.reshape(-1), val_y.reshape(-1)
     train_final = []
     val_final = []
@@ -65,7 +64,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
         print("Multiple CPUs are being used (Train fold).")
     else:
         print("Only one CPU is being used (Train fold).")
-    print(f"fold: {fold_num} beginning. Training finished.")
+    print(f"fold: {fold_num} Training finished.")
     result_dict[fold_num] = {
         "train_acc": train_final,
         "val_acc": val_final,
@@ -103,25 +102,24 @@ def main(args):
     manager = Manager()
     result_dict = manager.dict()
 
-    #for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
-    #    print(f"{fold}")
-    #    p = Process(target=train_fold,
-    #                args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-    #                      number_clauses, T, s, epochs, batch_size, result_dict, fold))
-    #    processes.append(p)
-    #    p.start()
-#
-#    for k in processes:
-#        k.join()
-    pool = Pool()
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
         print(f"{fold}")
-        pool.apply_async(train_fold, args=(
-            x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-            number_clauses, T, s, epochs, batch_size, result_dict, fold))
+        p = Process(target=train_fold,
+                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+                          number_clauses, T, s, epochs, batch_size, result_dict, fold))
+        processes.append(p)
+        p.start()
 
-    pool.close()
-    pool.join()
+    for k in processes:
+         k.join()
+    #pool = Pool()
+    #for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
+    #    pool.apply_async(train_fold, args=(
+    #        x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+    #        number_clauses, T, s, epochs, batch_size, result_dict, fold))
+
+    #pool.close()
+    #pool.join()
 
     # Prepare data for saving
     data_dict = dict(result_dict)
