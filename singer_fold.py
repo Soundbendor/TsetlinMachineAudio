@@ -86,8 +86,9 @@ def main(args):
     processes = []
 
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
+        print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
         p = Process(target=train_fold,
-                    args=(x_data[train_index], x_data[test_index], real_y_data[train_index], real_y_data[test_index], number_clauses, T, s, epochs, batch_size, result_dict, fold))
+                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index], number_clauses, T, s, epochs, batch_size, result_dict, fold))
         processes.append(p)
         p.start()
 
