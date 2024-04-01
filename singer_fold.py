@@ -88,11 +88,12 @@ def main(args):
         data = pickle.load(f)
 
     real_y_data = data["y"][:, -1]
-    y_indices = np.where(real_y_data != -1)[0]
+    y_indices = np.where(data["y"][:, -1] != -1)[0]
     real_y_data = real_y_data[y_indices]
     x_data = data["x"][y_indices]
 
-    y_strat = data["y"][:, -2][y_indices]  # stratify by techniques
+    y_strat = data["y"][:, -2]
+    y_strat = y_strat[y_indices]  # stratify by techniques
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
     print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
     print(f"Singers are: {np.unique(real_y_data)}")
@@ -100,13 +101,7 @@ def main(args):
     batch_size = 1000
     result_dict = {}
     processes = []
-    pid = os.getpid()
-    cpu_count = get_process_cpu_count(pid)
 
-    if cpu_count > 1:
-        print("Multiple CPUs are being used.")
-    else:
-        print("Only one CPU is being used.")
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
          print(f"{fold}")
          train_fold(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
