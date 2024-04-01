@@ -100,6 +100,11 @@ def main(args):
     for p in processes:
         p.join()
 
+    result_dict = {}
+    while not result_queue.empty():
+        fold, result = result_queue.get()
+        result_dict[fold] = result
+
     # Prepare data for saving
     data_dict = dict(result_dict)
 
