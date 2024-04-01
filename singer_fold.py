@@ -95,7 +95,7 @@ def main(args):
         processes.append(p)
         p.start()
 
-
+    result_dict = {}
     while not result_queue.empty():
         fold, result = result_queue.get()
         result_dict[fold] = result
@@ -103,7 +103,6 @@ def main(args):
     for p in processes:
         p.join()
 
-    result_dict = {}
 
 
     # Prepare data for saving
