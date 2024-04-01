@@ -5,13 +5,11 @@ import pickle
 import datetime
 import argparse
 from sklearn.metrics import accuracy_score
-from multiprocessing import Process, Manager
+from multiprocessing import Process, Queue, Manager
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
 from multiprocessing import Lock
 
-
-lock = Lock()
 
 def get_save_path(args, HEAD):
     """Make save path
@@ -28,7 +26,7 @@ def batched_train(model, X, y, batch_size, epochs=1):
         model.fit(X[i:i + batch_size], y[i:i + batch_size], epochs=epochs)
 
 
-def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, batch_size, result_dict, fold_num):
+def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, batch_size, result_dict, queue, fold_num):
     model = vanilla_classifier.TMClassifier(number_clauses,
                                             T=T,
                                             s=s,
@@ -53,12 +51,16 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
         val_final.append(val_acc)
         f1_final.append(f1_val)
 
-    with lock:
-        result_dict[fold_num] = {
-            "train_acc": train_final,
-            "val_acc": val_final,
-            "f1": f1_final
-        }
+    #result_dict[fold_num] = {
+    #    "train_acc": train_final,
+    #    "val_acc": val_final,
+    #    "f1": f1_final
+    #}
+    queue.put((fold_num, {
+        "train_acc": train_final,
+        "val_acc": val_final,
+        "f1": f1_final
+    }))
 
 
 def main(args):
@@ -84,13 +86,14 @@ def main(args):
     batch_size = 1000
     manager = Manager()
     result_dict = manager.dict()
-
+    result_queue = Queue()
     processes = []
 
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
         print(f"{fold}")
         p = Process(target=train_fold,
-                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index], number_clauses, T, s, epochs, batch_size, result_dict, fold))
+                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+                          number_clauses, T, s, epochs, batch_size, result_dict, result_queue, fold))
         processes.append(p)
         p.start()
 
