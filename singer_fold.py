@@ -5,7 +5,7 @@ import pickle
 import datetime
 import argparse
 from sklearn.metrics import accuracy_score
-from multiprocessing import Process, Queue, Manager
+from multiprocessing import Pool, Manager
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
 import psutil
@@ -69,7 +69,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
         "train_acc": train_final,
         "val_acc": val_final,
         "f1": f1_final
-     }
+    }
 
     print(f"fold: {fold_num} results saved.")
 
@@ -80,7 +80,6 @@ def main(args):
     T = int(args.T)
 
     epochs = int(args.epochs)
-
 
     with open(
             "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_2_bools_2024-03-29-14-02",
@@ -99,21 +98,30 @@ def main(args):
     print(f"Singers are: {np.unique(real_y_data)}")
     print(f"Techniques to stratify on are: {np.unique(y_strat)}")
     batch_size = 1000
-    #result_dict = {}
+    # result_dict = {}
     processes = []
     manager = Manager()
     result_dict = manager.dict()
 
+    # for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
+    #    print(f"{fold}")
+    #    p = Process(target=train_fold,
+    #                args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+    #                      number_clauses, T, s, epochs, batch_size, result_dict, fold))
+    #    processes.append(p)
+    #    p.start()
+
+    # for k in processes:
+    #    k.join()
+    pool = Pool()
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
         print(f"{fold}")
-        p = Process(target=train_fold,
-                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-                          number_clauses, T, s, epochs, batch_size, result_dict, fold))
-        processes.append(p)
-        p.start()
+        pool.apply_async(train_fold, args=(
+            x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+            number_clauses, T, s, epochs, batch_size, result_dict, fold))
 
-    for k in processes:
-        k.join()
+    pool.close()
+    pool.join()
 
     # Prepare data for saving
     data_dict = dict(result_dict)
