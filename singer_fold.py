@@ -8,7 +8,12 @@ from sklearn.metrics import accuracy_score
 from multiprocessing import Process, Queue, Manager
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
-from multiprocessing import Lock
+import psutil
+
+
+def get_process_cpu_count(pid):
+    process = psutil.Process(pid)
+    return process.cpu_num()
 
 
 def get_save_path(args, HEAD):
@@ -36,6 +41,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
                                             seed=1066)
 
     print(f"fold: {fold_num} Training start.")
+
     train_y, val_y = train_y.reshape(-1), val_y.reshape(-1)
     train_final = []
     val_final = []
@@ -51,6 +57,13 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
         train_final.append(train_acc)
         val_final.append(val_acc)
         f1_final.append(f1_val)
+    pid = os.getpid()
+    cpu_count = get_process_cpu_count(pid)
+
+    if cpu_count > 1:
+        print("Multiple CPUs are being used (Train fold).")
+    else:
+        print("Only one CPU is being used (Train fold).")
     print(f"fold: {fold_num} beginning. Training finished.")
     result_dict[fold_num] = {
         "train_acc": train_final,
@@ -68,23 +81,32 @@ def main(args):
 
     epochs = int(args.epochs)
 
+
     with open(
             "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_2_bools_2024-03-29-14-02",
             'rb') as f:
         data = pickle.load(f)
 
-    real_y_data = data["y"][:, -1]
+    real_y_data = data["y"][:, -2]
     y_indices = np.where(real_y_data != -1)[0]
     real_y_data = real_y_data[y_indices]
     x_data = data["x"][y_indices]
 
-    y_strat = data["y"][:, -2][y_indices]  # stratify by techniques
+    y_strat = data["y"][:, -1][y_indices]  # stratify by techniques
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
     print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
+    print(f"Singers are: {np.unique(real_y_data)}")
+    print(f"Techniques to stratify on are: {np.unique(y_strat)}")
     batch_size = 1000
     result_dict = {}
     processes = []
+    pid = os.getpid()
+    cpu_count = get_process_cpu_count(pid)
 
+    if cpu_count > 1:
+        print("Multiple CPUs are being used.")
+    else:
+        print("Only one CPU is being used.")
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
          print(f"{fold}")
          train_fold(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
