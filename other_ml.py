@@ -2,7 +2,6 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 from sklearn.svm import SVC
 from sklearn.metrics import f1_score
-from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 import multiprocessing
 from sklearn.ensemble import RandomForestClassifier
@@ -12,6 +11,7 @@ import argparse
 import os
 from sklearn.metrics import accuracy_score
 from multiprocessing import Process, Manager
+from sklearn.model_selection import StratifiedKFold
 
 
 def train_ml_algo(train_x, train_y, val_x, val_y, model_class, params, result_dict, fold_num):
@@ -33,6 +33,77 @@ def train_ml_algo(train_x, train_y, val_x, val_y, model_class, params, result_di
     return result_dict
 
 
+def parallel_train(class_type, model, param_grid):
+    if class_type == "vowel":
+        class_val = 0
+    elif class_type == "technique":
+        class_val = 1
+    elif class_type == "singer":
+        class_val = 2
+    else:
+        raise ValueError("No class type")
+
+    folds = {  # for singer id
+        0: [1, 10, 16, 17],
+        1: [0, 2, 11, 18],
+        2: [5, 8, 13, 14],
+        3: [4, 9, 12, 19],
+        4: [3, 6, 7, 15],
+    }
+
+    manager = Manager()
+    result_dict = manager.dict()
+
+    processes = []
+    with open(
+            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_mfcc_avg_2024-03-29-16-23.pickle",
+            'rb') as f:
+        data = pickle.load(f)
+
+    y_data = data["y"][:, class_val]
+    y_indices = np.where(y_data != -1)[0]
+    y_data = y_data[y_indices]
+    x_data = data["x"][y_indices]
+    check_y = data["y"][y_indices]
+
+    if class_val != 2:
+        fold_1_test_idx = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in folds[0]])
+        fold_1_train_idx = np.setdiff1d(np.arange(len(x_data)), fold_1_test_idx)
+
+        grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=-1)
+        grid_search.fit(x_data[fold_1_train_idx], y_data[fold_1_train_idx])
+        best_params = grid_search.best_params_
+        #return best_params
+        for fold_num, fold_indices in folds.items():
+            test_data_indices = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in fold_indices])
+            train_data_indices = np.setdiff1d(np.arange(len(x_data)), test_data_indices)
+            p = Process(target=train_ml_algo,
+                        args=(x_data[train_data_indices], y_data[train_data_indices], x_data[test_data_indices],
+                              y_data[test_data_indices], model, best_params, result_dict, fold_num))
+            processes.append(p)
+            p.start()
+
+    else:
+        kf = StratifiedKFold(random_state=1066)
+        train_idx, test_idx = next(kf.split(x_data,check_y[:,-2]))
+        grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=-1)
+        grid_search.fit(x_data[train_idx], y_data[test_idx])
+        best_params = grid_search.best_params_
+        #return best_params
+        for i,(train_idx,test_idx) in folds.items():
+            p = Process(target=train_ml_algo,
+                        args=(x_data[train_idx], y_data[train_idx], x_data[test_idx],
+                              y_data[test_idx], model, best_params, result_dict, i))
+            processes.append(p)
+            p.start()
+
+    for k in processes:
+        k.join()
+
+    data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
+    return data_dict
+
+
 def main(args):
     class_type = args.class_type
     ml_algo = args.ml_algo
@@ -45,59 +116,9 @@ def main(args):
 
     model, param_grid = models_and_params[ml_algo]
 
-    if class_type == "vowel":
-        class_val = 0
-    elif class_type == "technique":
-        class_val = 1
-    else:
-        raise ValueError("No class type")
+    data_dict = parallel_train(class_type,model,param_grid)
 
-    # Data stuff other commetns
-    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_mfcc_avg_2024-03-29-16-23.pickle", 'rb') as f:
-        data = pickle.load(f)
 
-    folds = {  # for singer id
-        0: [1, 10, 16, 17],
-        1: [0, 2, 11, 18],
-        2: [5, 8, 13, 14],
-        3: [4, 9, 12, 19],
-        4: [3, 6, 7, 15],
-    }
-
-    y_data = data["y"][:, class_val]
-    y_indices = np.where(y_data != -1)[0]
-    y_data = y_data[y_indices]
-    x_data = data["x"][y_indices]
-
-    check_y = data["y"][y_indices]
-
-    fold_1_test_idx = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in folds[0]])
-    fold_1_train_idx = np.setdiff1d(np.arange(len(x_data)), fold_1_test_idx)
-
-    grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=-1)
-    grid_search.fit(x_data[fold_1_train_idx], y_data[fold_1_train_idx])
-    best_params = grid_search.best_params_
-
-    manager = Manager()
-    result_dict = manager.dict()
-
-    processes = []
-
-    for fold_num, fold_indices in folds.items():
-        test_data_indices = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in fold_indices])
-        train_data_indices = np.setdiff1d(np.arange(len(x_data)), test_data_indices)
-        print(
-            f"test_idx {len(test_data_indices)}, train: {len(train_data_indices)}, total: {len(train_data_indices) + len(test_data_indices)}")
-        p = Process(target=train_ml_algo,
-                    args=(x_data[train_data_indices], y_data[train_data_indices], x_data[test_data_indices],
-                          y_data[test_data_indices], model, best_params, result_dict, fold_num))
-        processes.append(p)
-        p.start()
-
-    for p in processes:
-        p.join()
-
-    data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
     pickle_path = f"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/{ml_algo}_{class_type}"
     with open(pickle_path, "wb") as f:
         pickle.dump(data_dict, f)

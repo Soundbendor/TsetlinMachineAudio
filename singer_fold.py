@@ -9,6 +9,7 @@ from multiprocessing import Pool, Manager
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
 import psutil
+from sklearn.metrics import confusion_matrix
 
 
 def get_process_cpu_count(pid):
@@ -24,6 +25,23 @@ def get_save_path(args, HEAD):
     result_path = os.path.join(HEAD, suffix)
     return result_path
 
+def train_ml_algo(train_x, train_y, val_x, val_y, model_class, params, result_dict, fold_num):
+    # pre-assign data
+
+    model = model_class(**params)
+    model.fit(train_x, train_y)
+
+    # Make predictions
+    y_pred = model.predict(val_x)
+
+    # Evaluate the model
+    accuracy = accuracy_score(val_y, y_pred)
+    f1 = f1_score(val_y, y_pred, average='micro')
+    cm = confusion_matrix(val_y, y_pred)
+
+    result_dict[fold_num] = {"label": f"fold_{fold_num}", "acc": accuracy, "f1": f1, "cm": cm}
+
+    return result_dict
 
 def batched_train(model, X, y, batch_size, epochs=1):
     array_size = len(X)
@@ -72,6 +90,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
     }
 
     print(f"fold: {fold_num} results saved.")
+
 
 
 def main(args):
