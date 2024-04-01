@@ -25,23 +25,6 @@ def get_save_path(args, HEAD):
     result_path = os.path.join(HEAD, suffix)
     return result_path
 
-def train_ml_algo(train_x, train_y, val_x, val_y, model_class, params, result_dict, fold_num):
-    # pre-assign data
-
-    model = model_class(**params)
-    model.fit(train_x, train_y)
-
-    # Make predictions
-    y_pred = model.predict(val_x)
-
-    # Evaluate the model
-    accuracy = accuracy_score(val_y, y_pred)
-    f1 = f1_score(val_y, y_pred, average='micro')
-    cm = confusion_matrix(val_y, y_pred)
-
-    result_dict[fold_num] = {"label": f"fold_{fold_num}", "acc": accuracy, "f1": f1, "cm": cm}
-
-    return result_dict
 
 def batched_train(model, X, y, batch_size, epochs=1):
     array_size = len(X)
@@ -59,22 +42,22 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
                                             seed=1066)
 
     print(f"fold: {fold_num} Training start.")
-
+    print(f"Singers are: {np.unique(train_y)}")
     train_y, val_y = train_y.reshape(-1), val_y.reshape(-1)
     train_final = []
     val_final = []
     f1_final = []
-    for e in range(epochs):
-        batched_train(model, train_x, train_y, batch_size)
-        train_preds = model.predict(train_x)
-        val_preds = model.predict(val_x)
-
-        train_acc = accuracy_score(train_y, train_preds)
-        val_acc = accuracy_score(val_y, val_preds)
-        f1_val = f1_score(val_y, val_preds, average='micro')
-        train_final.append(train_acc)
-        val_final.append(val_acc)
-        f1_final.append(f1_val)
+    #for e in range(epochs):
+    #    batched_train(model, train_x, train_y, batch_size)
+    #    train_preds = model.predict(train_x)
+    #    val_preds = model.predict(val_x)
+    #
+    #    train_acc = accuracy_score(train_y, train_preds)
+    #    val_acc = accuracy_score(val_y, val_preds)
+    #    f1_val = f1_score(val_y, val_preds, average='micro')
+    #    train_final.append(train_acc)
+    #    val_final.append(val_acc)
+    #    f1_final.append(f1_val)
     pid = os.getpid()
     cpu_count = get_process_cpu_count(pid)
 
@@ -83,13 +66,13 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
     else:
         print("Only one CPU is being used (Train fold).")
     print(f"fold: {fold_num} beginning. Training finished.")
-    result_dict[fold_num] = {
-        "train_acc": train_final,
-        "val_acc": val_final,
-        "f1": f1_final
-    }
+    #result_dict[fold_num] = {
+    #    "train_acc": train_final,
+    #    "val_acc": val_final,
+    #    "f1": f1_final
+    #}
 
-    print(f"fold: {fold_num} results saved.")
+    #print(f"fold: {fold_num} results saved.")
 
 
 
@@ -113,9 +96,7 @@ def main(args):
     y_strat = data["y"][:, -2]
     y_strat = y_strat[y_indices]  # stratify by techniques
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
-    print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
-    print(f"Singers are: {np.unique(real_y_data)}")
-    print(f"Techniques to stratify on are: {np.unique(y_strat)}")
+
     batch_size = 1000
     # result_dict = {}
     processes = []
