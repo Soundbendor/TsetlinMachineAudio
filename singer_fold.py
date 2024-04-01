@@ -37,7 +37,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
     train_y, val_y = train_y.reshape(-1), val_y.reshape(-1)
     train_final = []
     val_final = []
-
+    f1_final = []
     for e in range(epochs):
         batched_train(model, train_x, train_y, batch_size)
         train_preds = model.predict(train_x)
@@ -45,14 +45,15 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
 
         train_acc = accuracy_score(train_y, train_preds)
         val_acc = accuracy_score(val_y, val_preds)
-
+        f1_val = f1_score(val_y, val_preds, average='micro')
         train_final.append(train_acc)
         val_final.append(val_acc)
+        f1_final.append(f1_val)
 
     result_dict[fold_num] = {
         "train_acc": train_final,
         "val_acc": val_final,
-        "preds": np.array(val_preds).tolist()  # Convert to list to be pickleable
+        "f1": f1_final
     }
 
 
@@ -85,7 +86,7 @@ def main(args):
 
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
         p = Process(target=train_fold,
-                    args=(train_index, test_index, x_data, real_y_data, number_clauses, T, s, epochs, batch_size, result_dict, fold))
+                    args=(x_data[train_index], x_data[test_index], real_y_data[train_index], real_y_data[test_index], number_clauses, T, s, epochs, batch_size, result_dict, fold))
         processes.append(p)
         p.start()
 
