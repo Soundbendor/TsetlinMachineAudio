@@ -103,25 +103,25 @@ def main(args):
     manager = Manager()
     result_dict = manager.dict()
 
-    for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
-        print(f"{fold}")
-        p = Process(target=train_fold,
-                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-                          number_clauses, T, s, epochs, batch_size, result_dict, fold))
-        processes.append(p)
-        p.start()
-
-    for k in processes:
-        k.join()
-    #pool = Pool()
     #for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
     #    print(f"{fold}")
-    #    pool.apply_async(train_fold, args=(
-    #        x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-    #        number_clauses, T, s, epochs, batch_size, result_dict, fold))
+    #    p = Process(target=train_fold,
+    #                args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+    #                      number_clauses, T, s, epochs, batch_size, result_dict, fold))
+    #    processes.append(p)
+    #    p.start()
+#
+#    for k in processes:
+#        k.join()
+    pool = Pool()
+    for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
+        print(f"{fold}")
+        pool.apply_async(train_fold, args=(
+            x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+            number_clauses, T, s, epochs, batch_size, result_dict, fold))
 
-    #pool.close()
-    #pool.join()
+    pool.close()
+    pool.join()
 
     # Prepare data for saving
     data_dict = dict(result_dict)
