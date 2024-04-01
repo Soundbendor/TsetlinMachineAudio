@@ -5,7 +5,7 @@ import pickle
 import datetime
 import argparse
 from sklearn.metrics import accuracy_score
-from multiprocessing import Pool, Manager
+from multiprocessing import Pool,Process, Manager
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
 import psutil
@@ -112,7 +112,7 @@ def main(args):
 
     y_strat = data["y"][:, -2]
     y_strat = y_strat[y_indices]  # stratify by techniques
-    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=4)
+    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
     print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
     print(f"Singers are: {np.unique(real_y_data)}")
     print(f"Techniques to stratify on are: {np.unique(y_strat)}")
@@ -122,25 +122,25 @@ def main(args):
     manager = Manager()
     result_dict = manager.dict()
 
-    # for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
-    #    print(f"{fold}")
-    #    p = Process(target=train_fold,
-    #                args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-    #                      number_clauses, T, s, epochs, batch_size, result_dict, fold))
-    #    processes.append(p)
-    #    p.start()
-
-    # for k in processes:
-    #    k.join()
-    pool = Pool()
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
         print(f"{fold}")
-        pool.apply_async(train_fold, args=(
-            x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-            number_clauses, T, s, epochs, batch_size, result_dict, fold))
+        p = Process(target=train_fold,
+                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+                          number_clauses, T, s, epochs, batch_size, result_dict, fold))
+        processes.append(p)
+        p.start()
 
-    pool.close()
-    pool.join()
+    for k in processes:
+        k.join()
+    #pool = Pool()
+    #for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
+    #    print(f"{fold}")
+    #    pool.apply_async(train_fold, args=(
+    #        x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+    #        number_clauses, T, s, epochs, batch_size, result_dict, fold))
+
+    #pool.close()
+    #pool.join()
 
     # Prepare data for saving
     data_dict = dict(result_dict)
