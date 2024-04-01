@@ -65,13 +65,7 @@ def main(args):
     s = int(args.s)
     T = int(args.T)
     epochs = int(args.epochs)
-    config_path = args.config
 
-    if config_path is not None:
-        with open(config_path, 'r') as f:
-            config = json.load(f)
-    else:
-        raise ValueError("No config path")
 
     if class_type == "vowel":
         class_val = 0
@@ -80,8 +74,8 @@ def main(args):
     else:
         raise ValueError("No class type")
 
-    # Data stuff
-    with open(config["data"], 'rb') as f:
+
+    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37", 'rb') as f:
         data = pickle.load(f)
 
     folds = {  # for singer id
@@ -123,7 +117,7 @@ def main(args):
     data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles"
-    pickle_file = get_save_path(["all_folds"], pickle_path)
+    pickle_file = get_save_path(["vowel_4bools"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 
@@ -135,7 +129,6 @@ if __name__ == "__main__":
     parser.add_argument("s", help="sensitivity")
     parser.add_argument("T", help="threshold")
     parser.add_argument("epochs", help="Number of training epochs")
-    parser.add_argument("config", help="config file")
     args = parser.parse_args()
     main(args)
 
