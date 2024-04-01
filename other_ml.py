@@ -90,7 +90,7 @@ def parallel_train(class_type, model, param_grid):
         grid_search.fit(x_data[train_idx], y_data[train_idx])
         best_params = grid_search.best_params_
         #return best_params
-        for i,(train_idx,test_idx) in folds.items():
+        for i,(train_idx,test_idx) in enumerate(kf.split(x_data,check_y[:,-2])):
             p = Process(target=train_ml_algo,
                         args=(x_data[train_idx], y_data[train_idx], x_data[test_idx],
                               y_data[test_idx], model, best_params, result_dict, i))
