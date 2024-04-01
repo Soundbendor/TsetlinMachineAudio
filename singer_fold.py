@@ -47,17 +47,17 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
     train_final = []
     val_final = []
     f1_final = []
-    #for e in range(epochs):
-    #    batched_train(model, train_x, train_y, batch_size)
-    #    train_preds = model.predict(train_x)
-    #    val_preds = model.predict(val_x)
-    #
-    #    train_acc = accuracy_score(train_y, train_preds)
-    #    val_acc = accuracy_score(val_y, val_preds)
-    #    f1_val = f1_score(val_y, val_preds, average='micro')
-    #    train_final.append(train_acc)
-    #    val_final.append(val_acc)
-    #    f1_final.append(f1_val)
+    for e in range(epochs):
+        batched_train(model, train_x, train_y, batch_size)
+        train_preds = model.predict(train_x)
+        val_preds = model.predict(val_x)
+
+        train_acc = accuracy_score(train_y, train_preds)
+        val_acc = accuracy_score(val_y, val_preds)
+        f1_val = f1_score(val_y, val_preds, average='micro')
+        train_final.append(train_acc)
+        val_final.append(val_acc)
+        f1_final.append(f1_val)
     pid = os.getpid()
     cpu_count = get_process_cpu_count(pid)
 
@@ -66,13 +66,13 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
     else:
         print("Only one CPU is being used (Train fold).")
     print(f"fold: {fold_num} beginning. Training finished.")
-    #result_dict[fold_num] = {
-    #    "train_acc": train_final,
-    #    "val_acc": val_final,
-    #    "f1": f1_final
-    #}
+    result_dict[fold_num] = {
+        "train_acc": train_final,
+        "val_acc": val_final,
+        "f1": f1_final
+    }
 
-    #print(f"fold: {fold_num} results saved.")
+    print(f"fold: {fold_num} results saved.")
 
 
 
