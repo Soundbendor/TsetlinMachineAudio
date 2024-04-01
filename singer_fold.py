@@ -87,12 +87,12 @@ def main(args):
             'rb') as f:
         data = pickle.load(f)
 
-    real_y_data = data["y"][:, -2]
+    real_y_data = data["y"][:, -1]
     y_indices = np.where(real_y_data != -1)[0]
     real_y_data = real_y_data[y_indices]
     x_data = data["x"][y_indices]
 
-    y_strat = data["y"][:, -1][y_indices]  # stratify by techniques
+    y_strat = data["y"][:, -2][y_indices]  # stratify by techniques
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
     print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
     print(f"Singers are: {np.unique(real_y_data)}")
