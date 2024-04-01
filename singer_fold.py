@@ -26,7 +26,7 @@ def batched_train(model, X, y, batch_size, epochs=1):
         model.fit(X[i:i + batch_size], y[i:i + batch_size], epochs=epochs)
 
 
-def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, batch_size, result_dict, queue, fold_num):
+def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, batch_size, result_dict, fold_num):
     model = vanilla_classifier.TMClassifier(number_clauses,
                                             T=T,
                                             s=s,
@@ -52,12 +52,12 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
         val_final.append(val_acc)
         f1_final.append(f1_val)
     print(f"fold: {fold_num} beginning. Training finished.")
-
-    queue.put((fold_num, {
+    result_dict[fold_num] = {
         "train_acc": train_final,
         "val_acc": val_final,
         "f1": f1_final
-    }))
+     }
+
     print(f"fold: {fold_num} results saved.")
 
 
@@ -82,28 +82,18 @@ def main(args):
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
     print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
     batch_size = 1000
-    manager = Manager()
-    result_dict = manager.dict()
-    result_queue = Queue()
+    result_dict = {}
     processes = []
 
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
         print(f"{fold}")
-        p = Process(target=train_fold,
-                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-                          number_clauses, T, s, epochs, batch_size, result_dict, result_queue, fold))
-        processes.append(p)
-        p.start()
+       train_fold(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+                          number_clauses, T, s, epochs, batch_size, result_dict, fold))
 
-    result_dict = {}
+
     while not result_queue.empty():
         fold, result = result_queue.get()
         result_dict[fold] = result
-
-    for p in processes:
-        p.join()
-
-
 
     # Prepare data for saving
     data_dict = dict(result_dict)
@@ -122,8 +112,3 @@ if __name__ == "__main__":
     parser.add_argument("epochs", help="Number of training epochs")
     args = parser.parse_args()
     main(args)
-   #result_dict[fold_num] = {
-    #    "train_acc": train_final,
-    #    "val_acc": val_final,
-    #    "f1": f1_final
-    #}
