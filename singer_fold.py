@@ -77,8 +77,9 @@ def main(args):
     y_strat = data["y"][:, -2][y_indices]  # stratify by techniques
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
 
-    batch_size = 1000
+    print(f"classed data length: {len(real_y_data)}. full_set_indexed: {len(y_strat)}, x_size: {len(x_data)}")
 
+    batch_size = 1000
     manager = Manager()
     result_dict = manager.dict()
 
