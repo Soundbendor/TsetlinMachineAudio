@@ -99,14 +99,21 @@ def main(args):
     print(f"Singers are: {np.unique(real_y_data)}")
     print(f"Techniques to stratify on are: {np.unique(y_strat)}")
     batch_size = 1000
-    result_dict = {}
+    #result_dict = {}
     processes = []
+    manager = Manager()
+    result_dict = manager.dict()
 
     for fold, (train_index, test_index) in enumerate(kf.split(x_data, y_strat)):
-         print(f"{fold}")
-         train_fold(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
-                          number_clauses, T, s, epochs, batch_size, result_dict, fold)
+        print(f"{fold}")
+        p = Process(target=train_fold,
+                    args=(x_data[train_index], real_y_data[train_index], x_data[test_index], real_y_data[test_index],
+                          number_clauses, T, s, epochs, batch_size, result_dict, fold))
+        processes.append(p)
+        p.start()
 
+    for k in processes:
+        k.join()
 
     # Prepare data for saving
     data_dict = dict(result_dict)
