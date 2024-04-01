@@ -35,6 +35,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
                                             platform='GPU',
                                             seed=1066)
 
+    print(f"fold: {fold_num} Training start.")
     train_y, val_y = train_y.reshape(-1), val_y.reshape(-1)
     train_final = []
     val_final = []
@@ -50,7 +51,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
         train_final.append(train_acc)
         val_final.append(val_acc)
         f1_final.append(f1_val)
-
+    print(f"fold: {fold_num} beginning. Training finished.")
     #result_dict[fold_num] = {
     #    "train_acc": train_final,
     #    "val_acc": val_final,
@@ -61,6 +62,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
         "val_acc": val_final,
         "f1": f1_final
     }))
+    print(f"fold: {fold_num} results saved.")
 
 
 def main(args):
