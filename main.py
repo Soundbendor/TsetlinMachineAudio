@@ -132,6 +132,9 @@ if __name__ == "__main__":
     parser.add_argument("T", help="threshold")
     parser.add_argument("epochs", help="Number of training epochs")
     args = parser.parse_args()
+    s = datetime.datetime.now()
     main(args)
+    e = datetime.datetime.now()
+    print(s-e)
 
 
