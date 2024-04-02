@@ -55,7 +55,7 @@ if __name__ == "__main__":
     param_grid = {"number_of_clauses": [ 2500, 5000, 1000],
                   "T": [100,50,200],
                   "s": [10, 20 ,5,]
-                  }
+                  }#gsgs
 
     with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/vowel_resample_4b_2024-04-02-12-59",'rb') as f:
        data = pickle.load(f)
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1066)
-    train_index, test_index = next(iter(kf.split(X, y)))
+    train_index, test_index = next(iter(kf.split(x_data, y_data)))
     train_x, val_x = x_data[train_index], x_data[test_index]
     train_y, val_y = y_data[train_index].reshape(-1), y_data[test_index].reshape(-1)
     model_class = TMClassifier
