@@ -72,3 +72,7 @@ if __name__ == "__main__":
     model_class = TMClassifier
     best_params, best_score, best_scores, best_params_list = hyperparameter_tuning(TMClassifier,train_x,train_y,val_x,val_y,param_grid)
     print(best_params)
+
+
+#
+#run resample 4 bool stuff. 
