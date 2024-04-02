@@ -57,7 +57,7 @@ if __name__ == "__main__":
                   "s": [10, 20 ,5,]
                   }#gsgs
 
-    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/vowel_resample_4b_2024-04-02-12-59",'rb') as f:
+    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_resample_4bool_2024-04-02-12-08.pickle",'rb') as f:
        data = pickle.load(f)
     y_data = data["y"][:, 1]
     y_indices = np.where(y_data != -1)[0]
