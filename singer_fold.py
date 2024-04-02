@@ -81,9 +81,9 @@ def main(args):
     T = int(args.T)
 
     epochs = int(args.epochs)
-#/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_8_bools_2024-03-29-14-23
+#
     with open(
-            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_8_bools_2024-03-29-14-23",
+            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37",
             'rb') as f:
         data = pickle.load(f)
 
@@ -125,7 +125,7 @@ def main(args):
     data_dict = dict(result_dict)
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/singer"
-    pickle_file = get_save_path(["singer_8bools"], pickle_path)
+    pickle_file = get_save_path(["singer_4bools"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 
