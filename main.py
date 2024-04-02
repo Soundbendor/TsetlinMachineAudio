@@ -77,7 +77,8 @@ def main(args):
 #sftp://mccabepe@access.engr.oregonstate.edu/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_8_bools_2024-03-29-14-23
 # /nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37
     #"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_2_bools_2024-03-29-14-02"
-    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_2_bools_2024-03-29-14-02", 'rb') as f:
+    #"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_avg_4bool_2024-04-02-11-37.pickle"
+    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_avg_4bool_2024-04-02-11-37.pickle", 'rb') as f:
         data = pickle.load(f)
 
     folds = {  # for singer id
@@ -119,7 +120,7 @@ def main(args):
     data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles"
-    pickle_file = get_save_path([f"{class_type}_2bools"], pickle_path)
+    pickle_file = get_save_path([f"{class_type}_avg4"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 
