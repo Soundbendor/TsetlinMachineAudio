@@ -1,6 +1,6 @@
 {
-    "seg_length" : 44100,
-    "sample_rate" : 44100,
+    "seg_length" : 16000,
+    "sample_rate" : 16000,
     "bit_depth" : 16,
     "n_mfcc" : 13,
     "log_mel": true,
@@ -12,7 +12,7 @@
     "return_bools": false,
     "n_mels" : 80,
     "center" : false,
-    "class_type" : "vowel",
+    "class_type" : "all",
     "avg_mfccs": false,
     "delay_bools": true,
     "train_directory" : "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/vocalset/data_by_singer/",

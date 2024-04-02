@@ -47,7 +47,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
 
         train_acc = accuracy_score(train_y, train_preds)
         val_acc = accuracy_score(val_y, val_preds)
-        f1_val = f1_score(val_y, val_preds, average='micro')
+        f1_val = f1_score(val_y, val_preds, average='weighted')
         train_final.append(train_acc)
         val_final.append(val_acc)
         f1_final.append(f1_val)
