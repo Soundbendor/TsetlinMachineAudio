@@ -135,6 +135,6 @@ if __name__ == "__main__":
     s = datetime.datetime.now()
     main(args)
     e = datetime.datetime.now()
-    print(s-e)
+    print(e-s)
 
 
