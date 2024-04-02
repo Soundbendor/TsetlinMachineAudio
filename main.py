@@ -75,7 +75,8 @@ def main(args):
         raise ValueError("No class type")
 
 #sftp://mccabepe@access.engr.oregonstate.edu/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_8_bools_2024-03-29-14-23
-    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37", 'rb') as f:
+# /nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37
+    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_8_bools_2024-03-29-14-23", 'rb') as f:
         data = pickle.load(f)
 
     folds = {  # for singer id
@@ -117,7 +118,7 @@ def main(args):
     data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles"
-    pickle_file = get_save_path([f"{class_type}_4bools"], pickle_path)
+    pickle_file = get_save_path([f"{class_type}_8bools"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 
