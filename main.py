@@ -117,7 +117,7 @@ def main(args):
     data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles"
-    pickle_file = get_save_path(["vowel_4bools"], pickle_path)
+    pickle_file = get_save_path([f"{class_type}_4bools"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 
