@@ -58,7 +58,8 @@ def parallel_train(class_type, model, param_grid):
     with open(
         #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_8k_raw_mfcc_2024-04-03-15-24.pickle
         #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_raw_mfcc_resample_noavg_2024-04-02-13-30.pickle
-            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_8k_raw_mfcc_2024-04-03-15-24.pickle",
+        #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_4k_raw_mfcc_2024-04-03-16-04.pickle
+            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_4k_raw_mfcc_2024-04-03-16-04.pickle",
             'rb') as f:
         data = pickle.load(f)
 
@@ -121,7 +122,7 @@ def main(args):
     data_dict = parallel_train(class_type,model,param_grid)
 
 
-    pickle_path = f"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/{ml_algo}_{class_type}_8k"
+    pickle_path = f"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/{ml_algo}_{class_type}_4k"
     with open(pickle_path, "wb") as f:
         pickle.dump(data_dict, f)
 

@@ -85,7 +85,8 @@ def main(args):
     #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37
     #"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_resample_4bool_2024-04-02-12-08.pickle"
     # /nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_8k_4Q_2024-04-03-15-24.pickle
-    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_8k_4Q_2024-04-03-15-24.pickle"
+    # /nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_4k_4Q_2024-04-03-15-48.pickle
+    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_4k_4Q_2024-04-03-15-48.pickle"
             ,
             'rb') as f:
         data = pickle.load(f)
@@ -128,7 +129,7 @@ def main(args):
     data_dict = dict(result_dict)
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/singer"
-    pickle_file = get_save_path([f"singer_{number_clauses}_8k_4Q"], pickle_path)
+    pickle_file = get_save_path([f"singer_{number_clauses}_4k_4Q"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 
