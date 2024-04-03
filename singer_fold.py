@@ -84,7 +84,7 @@ def main(args):
 #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_8_bools_2024-03-29-14-23
     #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37
     with open(
-            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/vowel_resample_4b_2024-04-02-12-59",
+            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_resample_4bool_2024-04-02-12-08.pickle",
             'rb') as f:
         data = pickle.load(f)
 
