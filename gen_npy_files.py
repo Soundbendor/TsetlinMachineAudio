@@ -103,7 +103,7 @@ def booleanize(x, booleanizer, config, train=True):
 
 
 def process_audio(input_file, config, verbose=False):
-    valid_class_types = {"vowel", "singer", "technique"}
+    valid_class_types = {"vowel", "singer", "technique","all"}
     class_type = config["class_type"]
     if class_type not in valid_class_types:
         raise ValueError("results: class_type must be one of %r." % valid_class_types)
