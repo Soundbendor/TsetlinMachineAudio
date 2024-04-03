@@ -53,7 +53,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
 
         train_acc = accuracy_score(train_y, train_preds)
         val_acc = accuracy_score(val_y, val_preds)
-        f1_val = f1_score(val_y, val_preds, average='micro')
+        f1_val = f1_score(val_y, val_preds, average='weighted')
         train_final.append(train_acc)
         val_final.append(val_acc)
         f1_final.append(f1_val)
@@ -81,9 +81,10 @@ def main(args):
     T = int(args.T)
 
     epochs = int(args.epochs)
-#
+#/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_8_bools_2024-03-29-14-23
+    #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37
     with open(
-            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37",
+            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/vowel_resample_4b_2024-04-02-12-59",
             'rb') as f:
         data = pickle.load(f)
 
@@ -125,7 +126,7 @@ def main(args):
     data_dict = dict(result_dict)
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/singer"
-    pickle_file = get_save_path(["singer_4bools"], pickle_path)
+    pickle_file = get_save_path([f"singer_{number_clauses}_16k_4bools"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 

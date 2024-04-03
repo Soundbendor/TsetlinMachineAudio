@@ -47,7 +47,7 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
 
         train_acc = accuracy_score(train_y, train_preds)
         val_acc = accuracy_score(val_y, val_preds)
-        f1_val = f1_score(val_y, val_preds, average='micro')
+        f1_val = f1_score(val_y, val_preds, average='weighted')
         train_final.append(train_acc)
         val_final.append(val_acc)
         f1_final.append(f1_val)
@@ -75,7 +75,11 @@ def main(args):
         raise ValueError("No class type")
 
 #sftp://mccabepe@access.engr.oregonstate.edu/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_8_bools_2024-03-29-14-23
-    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37", 'rb') as f:
+# /nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_4_bools_2024-03-29-13-37
+    #"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_folds_2_bools_2024-03-29-14-02"
+    #"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_avg_4bool_2024-04-02-11-37.pickle"
+    #"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_resample_4bool_2024-04-02-12-08.pickle"
+    with open("/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_resample_4bool_2024-04-02-12-08.pickle", 'rb') as f:
         data = pickle.load(f)
 
     folds = {  # for singer id
@@ -117,7 +121,7 @@ def main(args):
     data_dict = {fold: result_dict[fold] for fold in range(len(result_dict))}
 
     pickle_path = "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles"
-    pickle_file = get_save_path(["vowel_4bools"], pickle_path)
+    pickle_file = get_save_path([f"{class_type}_{number_clauses}_resample_4b"], pickle_path)
     with open(pickle_file, "wb") as f:
         pickle.dump(data_dict, f)
 
@@ -130,6 +134,9 @@ if __name__ == "__main__":
     parser.add_argument("T", help="threshold")
     parser.add_argument("epochs", help="Number of training epochs")
     args = parser.parse_args()
+    s = datetime.datetime.now()
     main(args)
+    e = datetime.datetime.now()
+    print(e-s)
 
 

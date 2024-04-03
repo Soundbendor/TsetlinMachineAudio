@@ -3,12 +3,12 @@ from sklearn.metrics import confusion_matrix
 from sklearn.svm import SVC
 from sklearn.metrics import f1_score
 from sklearn.model_selection import GridSearchCV
-
+import multiprocessing
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 import pickle
 import argparse
-
+import os
 from sklearn.metrics import accuracy_score
 from multiprocessing import Process, Manager
 from sklearn.model_selection import StratifiedKFold
@@ -25,7 +25,7 @@ def train_ml_algo(train_x, train_y, val_x, val_y, model_class, params, result_di
 
     # Evaluate the model
     accuracy = accuracy_score(val_y, y_pred)
-    f1 = f1_score(val_y, y_pred, average='micro')
+    f1 = f1_score(val_y, y_pred, average='weighted')
     cm = confusion_matrix(val_y, y_pred)
 
     result_dict[fold_num] = {"label": f"fold_{fold_num}", "acc": accuracy, "f1": f1, "cm": cm}
@@ -56,7 +56,7 @@ def parallel_train(class_type, model, param_grid):
 
     processes = []
     with open(
-            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_all_mfcc_avg_2024-03-29-16-23.pickle",
+            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_raw_mfcc_resample_noavg_2024-04-02-13-30.pickle",
             'rb') as f:
         data = pickle.load(f)
 
@@ -70,10 +70,10 @@ def parallel_train(class_type, model, param_grid):
         fold_1_test_idx = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in folds[0]])
         fold_1_train_idx = np.setdiff1d(np.arange(len(x_data)), fold_1_test_idx)
 
-        grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=1)
+        grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_weighted', n_jobs=-1)
         grid_search.fit(x_data[fold_1_train_idx], y_data[fold_1_train_idx])
         best_params = grid_search.best_params_
-        # return best_params
+        #return best_params
         for fold_num, fold_indices in folds.items():
             test_data_indices = np.concatenate([np.where(check_y[:, -1] == idx)[0] for idx in fold_indices])
             train_data_indices = np.setdiff1d(np.arange(len(x_data)), test_data_indices)
@@ -84,13 +84,13 @@ def parallel_train(class_type, model, param_grid):
             p.start()
 
     else:
-        kf = StratifiedKFold(shuffle=True, random_state=1066)
-        train_idx, test_idx = next(kf.split(x_data, check_y[:, -2]))
-        grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_micro', n_jobs=1)
+        kf = StratifiedKFold(shuffle=True,random_state=1066)
+        train_idx, test_idx = next(kf.split(x_data,check_y[:,-2]))
+        grid_search = GridSearchCV(estimator=model(), param_grid=param_grid, cv=None, scoring='f1_weighted', n_jobs=-1)
         grid_search.fit(x_data[train_idx], y_data[train_idx])
         best_params = grid_search.best_params_
-        # return best_params
-        for i, (train_idx, test_idx) in enumerate(kf.split(x_data, check_y[:, -2])):
+        #return best_params
+        for i,(train_idx,test_idx) in enumerate(kf.split(x_data,check_y[:,-2])):
             p = Process(target=train_ml_algo,
                         args=(x_data[train_idx], y_data[train_idx], x_data[test_idx],
                               y_data[test_idx], model, best_params, result_dict, i))
@@ -111,14 +111,15 @@ def main(args):
     models_and_params = {
         "svm": (SVC, {'kernel': ['linear', 'rbf'], 'C': [0.1, 1, 10], 'gamma': ['auto', 2 / 550]}),
         "rf": (RandomForestClassifier, {'n_estimators': [50, 100, 200], 'max_depth': [None, 10, 20]}),
-        "mlp": (MLPClassifier, {'hidden_layer_sizes': [(100, 100), (1000, 1000), (10000, 10000)], "max_iter": [500]})
+        "mlp": (MLPClassifier, {'hidden_layer_sizes': [(100, 100), (1000, 1000), (10000, 10000)],"max_iter" : [500]})
     }
 
     model, param_grid = models_and_params[ml_algo]
 
-    data_dict = parallel_train(class_type, model, param_grid)
+    data_dict = parallel_train(class_type,model,param_grid)
 
-    pickle_path = f"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/{ml_algo}_{class_type}"
+
+    pickle_path = f"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/Misc_files/pickles/{ml_algo}_{class_type}_noavg"
     with open(pickle_path, "wb") as f:
         pickle.dump(data_dict, f)
 
