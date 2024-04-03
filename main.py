@@ -41,7 +41,8 @@ def train_fold(train_x, train_y, val_x, val_y, number_clauses, T, s, epochs, bat
     val_final = []
     f1_final = []
     for e in range(epochs):
-        batched_train(model, train_x, train_y, batch_size)
+        #batched_train(model, train_x, train_y, batch_size)
+        model.fit(train_x,train_y,epochs=1)
         train_preds = model.predict(train_x)
         val_preds = model.predict(val_x)
 
