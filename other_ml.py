@@ -59,7 +59,8 @@ def parallel_train(class_type, model, param_grid):
         #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_8k_raw_mfcc_2024-04-03-15-24.pickle
         #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/vowel_all_raw_mfcc_resample_noavg_2024-04-02-13-30.pickle
         #/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_4k_raw_mfcc_2024-04-03-16-04.pickle
-            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_4k_raw_mfcc_2024-04-03-16-04.pickle",
+        #"/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_noisy_MFCC_2024-04-05-13-55.pickle"
+            "/nfs/guille/eecs_research/soundbendor/mccabepe/VocalSet/npy_files/vowel/all_all_noisy_MFCC_2024-04-05-13-55.pickle",
             'rb') as f:
         data = pickle.load(f)
 
