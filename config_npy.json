@@ -2,6 +2,7 @@
     "seg_length" : 16000,
     "sample_rate" : 16000,
     "bit_depth" : 16,
+    "add_noise": true,
     "n_mfcc" : 13,
     "log_mel": true,
     "num_quantiles" : 4,

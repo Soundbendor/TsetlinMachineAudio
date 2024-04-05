@@ -10,7 +10,7 @@ import os
 import json
 import datetime
 import shutil
-import warnings
+from pydub.generators import WhiteNoise
 
 
 def get_save_path(args, HEAD):
@@ -169,7 +169,9 @@ def process_audio(input_file, config, verbose=False):
     sound = AudioSegment.from_wav(input_file)
     sound = sound.strip_silence(silence_len=100, silence_thresh=-60, padding=40)
     sound = sound.set_frame_rate(config["sample_rate"])
-
+    if config["add_noise"]:
+        noise = WhiteNoise(sample_rate=config["sample_rate"]).to_audio_segment(duration=len(sound))
+        sound = sound.overlay(noise)
     seg_length_ms = config["seg_length"] // config["sample_rate"] * 1000
     # Split into nearly identical segments
     segments = sound[::seg_length_ms]
@@ -177,6 +179,7 @@ def process_audio(input_file, config, verbose=False):
     labels = []
     # Process each segment
     for i, segment in enumerate(segments):
+
 
         # Number of frames in segment:
         num_frames = segment.frame_count()
